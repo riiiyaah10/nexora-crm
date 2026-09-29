@@ -1,0 +1,235 @@
+{% extends "base.html" %}
+
+{% block title %}{{ lead.name }} — Lead Record — CRM-ERP{% endblock %}
+
+{% block content %}
+<!-- UNIFIED 4-PART PAGE HEADER -->
+<div class="page-header">
+    <div class="page-header-content">
+        <div class="row" style="gap: 8px; margin-bottom: 4px;">
+            <a href="{% url 'leads:list' %}" class="muted" style="font-size: 12px; font-weight: 500;">&larr; Back to Leads</a>
+            <span class="muted">/</span>
+            <span class="page-eyebrow" style="margin: 0;">LEAD SPECIFICATION</span>
+        </div>
+        <h1 class="page-title">
+            {{ lead.name }}
+            <span class="badge {{ lead.status }}">{{ lead.status }}</span>
+        </h1>
+        <p class="page-desc">Opportunity details, commercial value, touchpoint logs, and scheduled actions for this prospect.</p>
+    </div>
+
+    <div class="page-actions">
+        {% if can_convert and not converted and lead.status != "Won" or can_convert and not converted %}
+        <form method="post" action="{% url 'leads:convert' lead.pk %}">
+            {% csrf_token %}
+            <button type="submit" class="btn primary sm">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="width: 14px; height: 14px;">
+                    <polyline points="9 11 12 14 22 4"></polyline>
+                    <path d="M21 12v7a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h11"></path>
+                </svg>
+                Convert to Project
+            </button>
+        </form>
+        {% endif %}
+
+        {% if perms.leads.change_lead %}
+        <a class="btn ghost sm" href="{% url 'leads:update' lead.pk %}">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="width: 13px; height: 13px;">
+                <path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7"></path>
+                <path d="M18.5 2.5a2.121 2.121 0 0 1 3 3L12 15l-4 1 1-4 9.5-9.5z"></path>
+            </svg>
+            Edit Lead
+        </a>
+        {% endif %}
+
+        {% if perms.leads.delete_lead %}
+        <a class="btn danger sm" href="{% url 'leads:delete' lead.pk %}">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="width: 13px; height: 13px;">
+                <polyline points="3 6 5 6 21 6"></polyline>
+                <path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"></path>
+            </svg>
+            Delete
+        </a>
+        {% endif %}
+    </div>
+</div>
+
+<!-- ==========================================================================
+     SECTION 1: OVERVIEW METRICS GRID
+     ========================================================================== -->
+<div class="grid" style="margin-bottom: 24px;">
+    <div class="card stat-card">
+        <span class="label">Expected Deal Value</span>
+        <div class="stat">₹{{ lead.value|floatformat:0 }}</div>
+        <div class="stat-sub">Estimated opportunity revenue</div>
+    </div>
+
+    <div class="card stat-card">
+        <span class="label">Account Owner</span>
+        <div class="stat" style="font-size: 18px; font-weight: 700; color: var(--text-primary); margin-top: 4px;">
+            {{ lead.owner.name|default:"Unassigned" }}
+        </div>
+        <div class="stat-sub">Primary relationship lead</div>
+    </div>
+
+    <div class="card stat-card">
+        <span class="label">Lead Source</span>
+        <div class="stat" style="font-size: 18px; font-weight: 700; color: var(--text-primary); margin-top: 4px;">
+            {{ lead.source|default:"Direct Referral" }}
+        </div>
+        <div class="stat-sub">Origin channel</div>
+    </div>
+
+    <div class="card stat-card">
+        <span class="label">Pipeline Stage</span>
+        {% if perms.leads.change_lead %}
+        <form method="post" action="{% url 'leads:status' lead.pk %}" style="margin-top: 4px;">
+            {% csrf_token %}
+            <input type="hidden" name="next" value="{{ request.get_full_path }}">
+            <select class="input sm" name="status" onchange="this.form.submit()" style="font-weight: 600;">
+                {% for s in statuses %}
+                    <option value="{{ s }}" {% if s == lead.status %}selected{% endif %}>{{ s }}</option>
+                {% endfor %}
+            </select>
+        </form>
+        {% else %}
+        <div class="stat" style="font-size: 18px; margin-top: 4px;">
+            <span class="badge {{ lead.status }}">{{ lead.status }}</span>
+        </div>
+        {% endif %}
+        <div class="stat-sub" style="margin-top: 4px;">Current funnel state</div>
+    </div>
+</div>
+
+<div class="grid2">
+    <!-- LEFT COLUMN: SPECIFICATIONS & CONTACT DETAILS -->
+    <div style="display: flex; flex-direction: column; gap: 20px;">
+        <!-- CONTACT & COMPANY PROFILE -->
+        <div class="card">
+            <h2 class="sec">Prospect Details</h2>
+            
+            <div style="display: flex; flex-direction: column; gap: 14px;">
+                <div class="row" style="justify-content: space-between; border-bottom: 1px solid var(--border-subtle); padding-bottom: 10px;">
+                    <span class="muted">Company / Organization</span>
+                    <strong style="color: var(--text-primary);">{{ lead.company|default:"Independent Prospect" }}</strong>
+                </div>
+
+                <div class="row" style="justify-content: space-between; border-bottom: 1px solid var(--border-subtle); padding-bottom: 10px;">
+                    <span class="muted">Email Address</span>
+                    <a href="mailto:{{ lead.email }}" style="color: var(--accent-light); font-weight: 500;">
+                        {{ lead.email|default:"—" }}
+                    </a>
+                </div>
+
+                <div class="row" style="justify-content: space-between; border-bottom: 1px solid var(--border-subtle); padding-bottom: 10px;">
+                    <span class="muted">Direct Phone</span>
+                    <span style="color: var(--text-primary);">{{ lead.phone|default:"—" }}</span>
+                </div>
+
+                <div class="row" style="justify-content: space-between; border-bottom: 1px solid var(--border-subtle); padding-bottom: 10px;">
+                    <span class="muted">Next Scheduled Follow-up</span>
+                    <strong style="color: {% if lead.next_followup %}var(--accent-light){% else %}var(--text-muted){% endif %};">
+                        {{ lead.next_followup|date:"d M Y"|default:"Not scheduled" }}
+                    </strong>
+                </div>
+
+                <div class="row" style="justify-content: space-between;">
+                    <span class="muted">Record Created</span>
+                    <span class="muted" style="font-size: 12px;">{{ lead.created_at|date:"d M Y H:i" }}</span>
+                </div>
+            </div>
+
+            {% if lead.notes %}
+            <div style="margin-top: 18px; padding-top: 14px; border-top: 1px solid var(--border-subtle);">
+                <span class="label">Context &amp; Background Notes</span>
+                <p style="color: var(--text-secondary); margin: 6px 0 0; font-size: 13px; line-height: 1.5; white-space: pre-line;">
+                    {{ lead.notes }}
+                </p>
+            </div>
+            {% endif %}
+        </div>
+
+        <!-- LINKED PROJECT (IF CONVERTED) -->
+        {% if converted %}
+        <div class="card elevated">
+            <span class="label">CONVERTED ENGAGEMENT</span>
+            <h2 style="margin: 6px 0 8px;">Active Project Workstream</h2>
+            <p class="muted" style="font-size: 12px; margin-bottom: 14px;">
+                This lead was successfully converted to delivery.
+            </p>
+            <a class="btn primary sm" href="{% url 'projects:detail' converted.pk %}">
+                View Project Record &rarr;
+            </a>
+        </div>
+        {% endif %}
+
+        <!-- TASKS & DELIVERABLES WIDGET -->
+        {% include "partials/tasks.html" %}
+    </div>
+
+    <!-- RIGHT COLUMN: ACTIVITY TIMELINE & LOGS -->
+    <div style="display: flex; flex-direction: column; gap: 20px;">
+        <!-- LOG ACTIVITY FORM -->
+        {% if perms.leads.change_lead %}
+        <div class="card">
+            <h2 class="sec">Log Interaction Touchpoint</h2>
+            <div class="stat-sub" style="margin-bottom: 14px;">Record phone calls, emails, demos, and meeting outcomes.</div>
+
+            <form method="post" action="{% url 'leads:activity' lead.pk %}">
+                {% csrf_token %}
+                <div class="row" style="gap: 10px; margin-bottom: 10px;">
+                    <select class="input sm" name="kind" style="width: 140px;" required>
+                        <option value="Call">Phone Call</option>
+                        <option value="Email">Email Sent</option>
+                        <option value="Meeting">Meeting / Demo</option>
+                        <option value="Note">Internal Note</option>
+                    </select>
+                </div>
+                <textarea 
+                    name="note" 
+                    class="input" 
+                    placeholder="Log conversation summary, next steps, objections, or commitments..." 
+                    required 
+                    style="margin-bottom: 12px; min-height: 70px;"
+                ></textarea>
+                <button type="submit" class="btn primary sm">
+                    Record Touchpoint
+                </button>
+            </form>
+        </div>
+        {% endif %}
+
+        <!-- ACTIVITY HISTORY TIMELINE -->
+        <div class="card">
+            <h2 class="sec">Touchpoint Audit Trail</h2>
+            <div class="stat-sub" style="margin-bottom: 18px;">Chronological record of relationship events and notes</div>
+
+            <div class="timeline">
+                {% for a in activities %}
+                <div class="timeline-item">
+                    <div class="timeline-dot"></div>
+                    <div class="timeline-content">
+                        <div class="timeline-header">
+                            <span class="badge" style="background: var(--surface-elevated); border-color: var(--border); font-size: 10px; text-transform: uppercase;">
+                                {{ a.kind }}
+                            </span>
+                            <span class="timeline-meta">{{ a.created_at|date:"d M Y H:i" }}</span>
+                        </div>
+                        <p style="margin: 6px 0; color: var(--text-primary); font-size: 13px; line-height: 1.4;">
+                            {{ a.note }}
+                        </p>
+                        <div class="timeline-meta">
+                            Logged by {{ a.user.name|default:"System" }}
+                        </div>
+                    </div>
+                </div>
+                {% empty %}
+                <div style="text-align: center; padding: 32px 16px; color: var(--text-muted); font-size: 13px;">
+                    No interactions recorded for this lead yet.
+                </div>
+                {% endfor %}
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

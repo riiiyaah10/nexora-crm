@@ -1,0 +1,78 @@
+{% extends "base.html" %}
+
+{% block title %}System Audit Log — CRM-ERP{% endblock %}
+
+{% block content %}
+<!-- UNIFIED 4-PART PAGE HEADER -->
+<div class="page-header">
+    <div class="page-header-content">
+        <div class="page-eyebrow">SYSTEM SECURITY &amp; COMPLIANCE</div>
+        <h1 class="page-title">System Audit Log</h1>
+        <p class="page-desc">Tamper-evident operational audit trail recording state transitions, user authentications, and data modifications.</p>
+    </div>
+</div>
+
+<div class="card wrap">
+    <table>
+        <thead>
+            <tr>
+                <th>Timestamp</th>
+                <th>Operator</th>
+                <th>Action</th>
+                <th>Entity / Target</th>
+                <th>Activity Detail</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for a in page %}
+            <tr>
+                <td>
+                    <span style="font-size: 12px; color: var(--text-secondary); white-space: nowrap;">
+                        {{ a.created_at|date:"d M Y" }}
+                        <span class="muted" style="font-size: 11px; margin-left: 2px;">{{ a.created_at|date:"H:i:s" }}</span>
+                    </span>
+                </td>
+                <td>
+                    <div class="row" style="gap: 8px;">
+                        <div style="width: 24px; height: 24px; border-radius: var(--radius-sm); background: var(--surface-elevated); border: 1px solid var(--border); display: flex; align-items: center; justify-content: center; font-size: 11px; font-weight: 700;">
+                            {{ a.user.name|first|upper|default:"S" }}
+                        </div>
+                        <span style="font-weight: 500; color: var(--text-primary);">
+                            {{ a.user.name|default:"System Engine" }}
+                        </span>
+                    </div>
+                </td>
+                <td>
+                    <span class="badge {% if a.action == 'create' or a.action == 'register' %}Won{% elif a.action == 'delete' %}Lost{% elif a.action == 'login' %}Active{% elif a.action == 'convert' %}Planning{% else %}Contacted{% endif %}" style="text-transform: uppercase; font-size: 10px;">
+                        {{ a.action }}
+                    </span>
+                </td>
+                <td>
+                    {% if a.entity %}
+                    <span style="font-weight: 600; color: var(--text-primary);">{{ a.entity }}</span>
+                    {% if a.entity_id %}
+                    <span class="muted" style="font-size: 11px;">#{{ a.entity_id }}</span>
+                    {% endif %}
+                    {% else %}
+                    <span class="muted">—</span>
+                    {% endif %}
+                </td>
+                <td>
+                    <span style="color: var(--text-secondary); font-size: 13px;">
+                        {{ a.detail|default:"—" }}
+                    </span>
+                </td>
+            </tr>
+            {% empty %}
+            <tr>
+                <td colspan="5" style="text-align: center; padding: 48px 16px; color: var(--text-muted);">
+                    No audit records recorded yet.
+                </td>
+            </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+
+    {% include "partials/pager.html" %}
+</div>
+{% endblock %}

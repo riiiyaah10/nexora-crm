@@ -1,0 +1,121 @@
+{% extends "base.html" %}
+
+{% block title %}Projects Directory — CRM-ERP{% endblock %}
+
+{% block content %}
+<!-- UNIFIED 4-PART PAGE HEADER -->
+<div class="page-header">
+    <div class="page-header-content">
+        <div class="page-eyebrow">OPERATIONS &amp; DELIVERY</div>
+        <h1 class="page-title">Projects Directory</h1>
+        <p class="page-desc">Track client workstreams, delivery timelines, project manager allocations, and milestone budgets.</p>
+    </div>
+    <div class="page-actions">
+        {% if perms.projects.add_project %}
+        <a class="btn primary sm" href="{% url 'projects:create' %}">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" style="width: 14px; height: 14px;">
+                <line x1="12" y1="5" x2="12" y2="19"></line>
+                <line x1="5" y1="12" x2="19" y2="12"></line>
+            </svg>
+            New Project
+        </a>
+        {% endif %}
+    </div>
+</div>
+
+<!-- ==========================================================================
+     UNIFIED SEARCH & FILTERS TOOLBAR
+     ========================================================================== -->
+<div class="toolbar">
+    <form method="get" class="toolbar-group">
+        <div style="flex: 2; min-width: 240px;">
+            <input 
+                type="text"
+                class="input sm" 
+                name="q" 
+                value="{{ q }}" 
+                placeholder="Search project name, client description..." 
+            >
+        </div>
+
+        <div style="flex: 1; min-width: 160px;">
+            <select class="input sm" name="status" onchange="this.form.submit()">
+                <option value="">All delivery stages</option>
+                {% for s in statuses %}
+                    <option value="{{ s }}" {% if s == status %}selected{% endif %}>{{ s }}</option>
+                {% endfor %}
+            </select>
+        </div>
+
+        <button type="submit" class="btn primary sm">Filter</button>
+        {% if q or status %}
+        <a href="{% url 'projects:list' %}" class="btn ghost sm">Reset</a>
+        {% endif %}
+    </form>
+</div>
+
+<!-- ==========================================================================
+     PROJECTS DATA TABLE
+     ========================================================================== -->
+<div class="card wrap">
+    <table>
+        <thead>
+            <tr>
+                <th>Project Engagement</th>
+                <th>Project Manager</th>
+                <th>Allocated Budget</th>
+                <th>Delivery Deadline</th>
+                <th>Engagement Status</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for p in page %}
+            <tr>
+                <td>
+                    <div style="font-weight: 600;">
+                        <a href="{% url 'projects:detail' p.pk %}" style="color: var(--text-primary);">
+                            {{ p.name }}
+                        </a>
+                    </div>
+                    {% if p.lead %}
+                    <div class="muted" style="font-size: 11px; margin-top: 2px;">
+                        Origin Lead: <a href="{% url 'leads:detail' p.lead_id %}" style="color: var(--accent-light);">{{ p.lead.name }}</a>
+                    </div>
+                    {% endif %}
+                </td>
+                <td>
+                    <span style="color: var(--text-secondary); font-size: 13px;">
+                        {{ p.manager.name|default:"Unassigned" }}
+                    </span>
+                </td>
+                <td>
+                    <span style="font-weight: 700; color: var(--text-primary);">
+                        ₹{{ p.budget|floatformat:0 }}
+                    </span>
+                </td>
+                <td>
+                    {% if p.deadline %}
+                    <span style="font-size: 12px; color: var(--text-secondary);">
+                        {{ p.deadline|date:"d M Y" }}
+                    </span>
+                    {% else %}
+                    <span class="muted">—</span>
+                    {% endif %}
+                </td>
+                <td>
+                    <span class="badge {{ p.status }}">{{ p.status }}</span>
+                </td>
+            </tr>
+            {% empty %}
+            <tr>
+                <td colspan="5" style="text-align: center; padding: 48px 16px; color: var(--text-muted);">
+                    No projects found matching the filter criteria.
+                </td>
+            </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+
+    {% include "partials/pager.html" with qs="q="|add:q|add:"&status="|add:status|add:"&" %}
+</div>
+{% endblock %}

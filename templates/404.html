@@ -1,0 +1,3 @@
+{% extends "base.html" %}
+{% block content %}<div class="card deny"><div class="ico">🔍</div><h1>Not found</h1><p class="muted">That page or record doesn't exist (or isn't yours to see).</p><a class="btn" href="{% url 'home' %}">Back</a></div>{% endblock %}
+{% block public %}<div class="card deny"><h1>Not found</h1><a class="btn" href="{% url 'accounts:login' %}">Sign in</a></div>{% endblock %}

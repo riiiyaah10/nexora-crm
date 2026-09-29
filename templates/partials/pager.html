@@ -1,0 +1,29 @@
+{% if page.paginator.num_pages > 1 %}
+<div class="pager">
+  {% if page.has_previous %}
+  <a class="btn ghost sm" href="?{{ qs }}page={{ page.previous_page_number }}">
+    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="width: 12px; height: 12px;">
+      <polyline points="15 18 9 12 15 6"></polyline>
+    </svg>
+    Previous
+  </a>
+  {% else %}
+  <div></div>
+  {% endif %}
+
+  <span class="muted" style="font-size: 12px; font-weight: 500;">
+    Page <strong style="color: var(--text-primary);">{{ page.number }}</strong> of <strong style="color: var(--text-primary);">{{ page.paginator.num_pages }}</strong>
+  </span>
+
+  {% if page.has_next %}
+  <a class="btn ghost sm" href="?{{ qs }}page={{ page.next_page_number }}">
+    Next
+    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="width: 12px; height: 12px;">
+      <polyline points="9 18 15 12 9 6"></polyline>
+    </svg>
+  </a>
+  {% else %}
+  <div></div>
+  {% endif %}
+</div>
+{% endif %}

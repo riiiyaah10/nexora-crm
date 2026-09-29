@@ -1,0 +1,144 @@
+{% extends "base.html" %}
+
+{% block title %}Financial Overview — CRM-ERP{% endblock %}
+
+{% block content %}
+<!-- UNIFIED 4-PART PAGE HEADER -->
+<div class="page-header">
+    <div class="page-header-content">
+        <div class="page-eyebrow">FINANCIAL CONTROLS</div>
+        <h1 class="page-title">Financial Overview</h1>
+        <p class="page-desc">Corporate cashflow summary, receivables aging, settled income, and operational expenditures.</p>
+    </div>
+    <div class="page-actions">
+        {% if perms.finance.add_invoice %}
+        <a class="btn primary sm" href="{% url 'finance:invoice_create' %}">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" style="width: 14px; height: 14px;">
+                <line x1="12" y1="5" x2="12" y2="19"></line>
+                <line x1="5" y1="12" x2="19" y2="12"></line>
+            </svg>
+            New Invoice
+        </a>
+        {% endif %}
+        {% if perms.finance.add_transaction %}
+        <a class="btn ghost sm" href="{% url 'finance:transaction_create' %}">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" style="width: 14px; height: 14px;">
+                <line x1="12" y1="5" x2="12" y2="19"></line>
+                <line x1="5" y1="12" x2="19" y2="12"></line>
+            </svg>
+            Add Transaction
+        </a>
+        {% endif %}
+    </div>
+</div>
+
+{% include "finance/_tabs.html" with tab="overview" %}
+
+<!-- KPI METRICS SUMMARY -->
+<div class="grid">
+    <div class="card stat-card">
+        <div class="label">
+            <span>Realized Income</span>
+            <span class="text-green" style="font-weight: 700;">Revenue</span>
+        </div>
+        <div class="stat text-green">₹{{ s.income|floatformat:0 }}</div>
+        <div class="stat-sub">Settled inflows</div>
+    </div>
+
+    <div class="card stat-card">
+        <div class="label">
+            <span>Operating Expenses</span>
+            <span class="text-red" style="font-weight: 700;">Outflows</span>
+        </div>
+        <div class="stat text-red">₹{{ s.expense|floatformat:0 }}</div>
+        <div class="stat-sub">Incurred operational expenditures</div>
+    </div>
+
+    <div class="card stat-card">
+        <div class="label">
+            <span>Net Operating Margin</span>
+            <span class="badge" style="background: var(--surface-elevated); border-color: var(--border);">Net</span>
+        </div>
+        <div class="stat" style="color: {% if s.net >= 0 %}var(--success){% else %}var(--danger){% endif %};">
+            ₹{{ s.net|floatformat:0 }}
+        </div>
+        <div class="stat-sub">Gross earnings less expense</div>
+    </div>
+
+    <div class="card stat-card">
+        <div class="label">
+            <span>Pending Receivables</span>
+            {% if s.overdue %}
+                <span class="badge Overdue">₹{{ s.overdue|floatformat:0 }} overdue</span>
+            {% else %}
+                <span class="badge Draft">Current</span>
+            {% endif %}
+        </div>
+        <div class="stat">₹{{ s.outstanding|floatformat:0 }}</div>
+        <div class="stat-sub">Total unpaid billing balance</div>
+    </div>
+</div>
+
+<div class="grid2">
+    <!-- 6 MONTH CASHFLOW PERFORMANCE -->
+    <div class="card">
+        <h2 class="sec">Income vs. Expenditures (Last 6 Months)</h2>
+        <div class="stat-sub" style="margin-bottom: 20px;">Comparative monthly cash distribution</div>
+
+        {% for m in s.months %}
+        <div class="cashflow-row">
+            <div class="cashflow-header">
+                <span style="font-weight: 600; color: var(--text-secondary);">{{ m.label }}</span>
+                <span>
+                    <span class="text-green" style="font-weight: 600;">₹{{ m.income|floatformat:0 }}</span>
+                    <span class="muted">/</span>
+                    <span class="text-red" style="font-weight: 600;">₹{{ m.expense|floatformat:0 }}</span>
+                </span>
+            </div>
+            <div class="cashflow-bars">
+                <div class="cashflow-bar bar g" style="width: {{ m.income_pct }}%;"></div>
+                <div class="cashflow-bar bar r" style="width: {{ m.expense_pct }}%;"></div>
+            </div>
+        </div>
+        {% endfor %}
+    </div>
+
+    <!-- RECENT INVOICES SUMMARY -->
+    <div class="card wrap">
+        <div style="padding: 16px 20px; border-bottom: 1px solid var(--border-subtle); display: flex; justify-content: space-between; align-items: center;">
+            <h2 class="sec" style="margin: 0;">Latest Billing Statements</h2>
+            <a href="{% url 'finance:invoices' %}" class="muted" style="font-size: 12px; font-weight: 600;">
+                All Invoices &rarr;
+            </a>
+        </div>
+        <table>
+            <thead>
+                <tr>
+                    <th>Invoice #</th>
+                    <th>Client</th>
+                    <th>Amount</th>
+                    <th>Status</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for i in recent %}
+                <tr>
+                    <td>
+                        <strong style="color: var(--text-primary);">{{ i.number }}</strong>
+                    </td>
+                    <td>{{ i.client }}</td>
+                    <td style="font-weight: 600;">₹{{ i.total|floatformat:0 }}</td>
+                    <td><span class="badge {{ i.effective_status }}">{{ i.effective_status }}</span></td>
+                </tr>
+                {% empty %}
+                <tr>
+                    <td colspan="4" style="text-align: center; padding: 24px; color: var(--text-muted);">
+                        No billing statements recorded yet.
+                    </td>
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    </div>
+</div>
+{% endblock %}

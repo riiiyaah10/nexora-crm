@@ -1,0 +1,62 @@
+{% extends "base.html" %}
+
+{% block title %}Verify Passcode — CRM-ERP Enterprise Suite{% endblock %}
+
+{% block public %}
+<div class="auth-card">
+    <div class="auth-brand">
+        <div class="auth-brand-logo">C</div>
+        <div class="auth-brand-name">CRM<span>·</span>ERP</div>
+    </div>
+
+    <div class="page-eyebrow">TWO-FACTOR AUTHENTICATION</div>
+    <h1>Verify passcode</h1>
+    <p class="auth-desc">
+        We sent a 6-digit one-time authentication passcode to
+        <strong>{{ email }}</strong>.
+    </p>
+
+    <form method="post" novalidate>
+        {% csrf_token %}
+
+        {% if form.non_field_errors %}
+            <div class="msg error" style="margin-bottom: 16px;">
+                {{ form.non_field_errors }}
+            </div>
+        {% endif %}
+
+        <div class="formrow" style="margin-bottom: 20px;">
+            <label for="id_otp" style="text-align: center;">6-Digit Passcode</label>
+            <input
+                id="id_otp"
+                type="text"
+                name="otp"
+                class="input otp-input"
+                inputmode="numeric"
+                autocomplete="one-time-code"
+                maxlength="6"
+                pattern="[0-9]{6}"
+                placeholder="000000"
+                required
+                autofocus
+            >
+            {% if form.otp.errors %}
+                <ul class="errorlist" style="text-align: center;">
+                    {% for error in form.otp.errors %}
+                        <li>{{ error }}</li>
+                    {% endfor %}
+                </ul>
+            {% endif %}
+        </div>
+
+        <button type="submit" class="btn primary" style="width: 100%; justify-content: center; min-height: 42px;">
+            Verify &amp; Sign In
+        </button>
+    </form>
+
+    <div style="text-align: center; margin-top: 24px; padding-top: 20px; border-top: 1px solid var(--border-subtle); font-size: 13px; color: var(--text-muted);">
+        Didn't receive the code or need a new one?
+        <a href="{% url 'accounts:login' %}" style="color: var(--accent-light); font-weight: 500; margin-left: 4px;">Request new OTP</a>
+    </div>
+</div>
+{% endblock %}

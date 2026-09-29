@@ -1,0 +1,203 @@
+{% extends "base.html" %}
+
+{% block title %}Leads Directory — CRM-ERP{% endblock %}
+
+{% block content %}
+<!-- UNIFIED 4-PART PAGE HEADER -->
+<div class="page-header">
+    <div class="page-header-content">
+        <div class="page-eyebrow">SALES PIPELINE</div>
+        <h1 class="page-title">Leads Directory</h1>
+        <p class="page-desc">Manage business opportunities, qualification stages, expected deal values, and scheduled follow-up touchpoints.</p>
+    </div>
+    <div class="page-actions">
+        <a class="btn ghost sm" href="{% url 'leads:export' %}?q={{ q }}&status={{ status }}">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="width: 14px; height: 14px;">
+                <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"></path>
+                <polyline points="7 10 12 15 17 10"></polyline>
+                <line x1="12" y1="15" x2="12" y2="3"></line>
+            </svg>
+            Export CSV
+        </a>
+        {% if perms.leads.add_lead %}
+        <a class="btn primary sm" href="{% url 'leads:create' %}">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" style="width: 14px; height: 14px;">
+                <line x1="12" y1="5" x2="12" y2="19"></line>
+                <line x1="5" y1="12" x2="19" y2="12"></line>
+            </svg>
+            Add Lead
+        </a>
+        {% endif %}
+    </div>
+</div>
+
+<!-- ==========================================================================
+     UNIFIED SEARCH & FILTERS TOOLBAR
+     ========================================================================== -->
+<div class="toolbar">
+    <form method="get" class="toolbar-group">
+        <div style="position: relative; flex: 2; min-width: 240px;">
+            <input 
+                type="text"
+                class="input sm" 
+                name="q" 
+                value="{{ q }}" 
+                placeholder="Search prospect, company, email, phone..." 
+            >
+        </div>
+
+        <div style="flex: 1; min-width: 150px;">
+            <select class="input sm" name="status" onchange="this.form.submit()">
+                <option value="">All qualification stages</option>
+                {% for s in statuses %}
+                    <option value="{{ s }}" {% if s == status %}selected{% endif %}>{{ s }}</option>
+                {% endfor %}
+            </select>
+        </div>
+
+        <div style="width: 130px;">
+            <select class="input sm" name="view" onchange="this.form.submit()">
+                <option value="table" {% if view == 'table' %}selected{% endif %}>Table View</option>
+                <option value="board" {% if view == 'board' %}selected{% endif %}>Kanban Board</option>
+            </select>
+        </div>
+
+        <button type="submit" class="btn primary sm">
+            Filter
+        </button>
+        {% if q or status %}
+        <a href="{% url 'leads:list' %}?view={{ view }}" class="btn ghost sm">
+            Reset
+        </a>
+        {% endif %}
+    </form>
+</div>
+
+<!-- ==========================================================================
+     VIEW: KANBAN BOARD
+     ========================================================================== -->
+{% if view == 'board' %}
+<div class="board">
+    {% for s, items in columns %}
+    <div class="col">
+        <h3>
+            <span>{{ s }}</span>
+            <span class="badge" style="background: var(--surface); color: var(--text-muted); font-size: 11px;">
+                {{ items|length }}
+            </span>
+        </h3>
+
+        <div style="display: flex; flex-direction: column; gap: 8px;">
+            {% for l in items %}
+            <div class="kcard">
+                <div class="row" style="justify-content: space-between; align-items: flex-start; margin-bottom: 6px;">
+                    <a href="{% url 'leads:detail' l.pk %}" style="font-weight: 600; font-size: 13px; color: var(--text-primary);">
+                        {{ l.name }}
+                    </a>
+                    <span style="font-weight: 700; font-size: 12px; color: var(--accent-light);">
+                        ₹{{ l.value|floatformat:0 }}
+                    </span>
+                </div>
+
+                <div class="muted" style="font-size: 11px; margin-bottom: 8px;">
+                    {{ l.company|default:"Independent Prospect" }}
+                </div>
+
+                {% if perms.leads.change_lead %}
+                <form method="post" action="{% url 'leads:status' l.pk %}" style="margin-top: 6px;">
+                    {% csrf_token %}
+                    <input type="hidden" name="next" value="{{ request.get_full_path }}">
+                    <select class="input sm" name="status" onchange="this.form.submit()" style="font-size: 11px; padding: 2px 8px; min-height: 26px;">
+                        {% for st in statuses %}
+                            <option value="{{ st }}" {% if st == l.status %}selected{% endif %}>Move to {{ st }}</option>
+                        {% endfor %}
+                    </select>
+                </form>
+                {% endif %}
+            </div>
+            {% empty %}
+            <div style="text-align: center; padding: 24px 8px; color: var(--text-muted); font-size: 12px; border: 1px dashed var(--border-subtle); border-radius: var(--radius-sm);">
+                No leads in this stage
+            </div>
+            {% endfor %}
+        </div>
+    </div>
+    {% endfor %}
+</div>
+
+<!-- ==========================================================================
+     VIEW: DATA TABLE
+     ========================================================================== -->
+{% else %}
+<div class="card wrap">
+    <table>
+        <thead>
+            <tr>
+                <th>Prospect / Contact</th>
+                <th>Company</th>
+                <th>Source</th>
+                <th>Expected Value</th>
+                <th>Next Follow-up</th>
+                <th>Account Owner</th>
+                <th>Pipeline Stage</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for l in page %}
+            <tr>
+                <td>
+                    <div style="font-weight: 600;">
+                        <a href="{% url 'leads:detail' l.pk %}" style="color: var(--text-primary);">
+                            {{ l.name }}
+                        </a>
+                    </div>
+                    <div class="muted" style="font-size: 11px; margin-top: 2px;">
+                        {{ l.email }} &middot; {{ l.phone }}
+                    </div>
+                </td>
+                <td>
+                    <span style="font-weight: 500; color: var(--text-secondary);">
+                        {{ l.company|default:"—" }}
+                    </span>
+                </td>
+                <td>
+                    <span class="muted" style="font-size: 12px;">{{ l.source|default:"Direct" }}</span>
+                </td>
+                <td>
+                    <span style="font-weight: 700; color: var(--text-primary);">
+                        ₹{{ l.value|floatformat:0 }}
+                    </span>
+                </td>
+                <td>
+                    {% if l.next_followup %}
+                    <span style="font-weight: 500; font-size: 12px; color: var(--accent-light);">
+                        {{ l.next_followup|date:"d M Y" }}
+                    </span>
+                    {% else %}
+                    <span class="muted">—</span>
+                    {% endif %}
+                </td>
+                <td>
+                    <span style="font-size: 12px; color: var(--text-secondary);">
+                        {{ l.owner.name|default:"Unassigned" }}
+                    </span>
+                </td>
+                <td>
+                    <span class="badge {{ l.status }}">{{ l.status }}</span>
+                </td>
+            </tr>
+            {% empty %}
+            <tr>
+                <td colspan="7" style="text-align: center; padding: 48px 16px; color: var(--text-muted);">
+                    No leads found matching your search criteria.
+                </td>
+            </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+
+    {% include "partials/pager.html" with qs="q="|add:q|add:"&status="|add:status|add:"&view="|add:view|add:"&" %}
+</div>
+{% endif %}
+
+{% endblock %}

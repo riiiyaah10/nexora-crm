@@ -1,0 +1,10 @@
+{% extends "base.html" %}
+{% block title %}Access Denied{% endblock %}
+{% block content %}
+<div class="card deny"><div class="ico">🚫</div><h1>Access Denied</h1>
+<p class="muted">You don't have permission to open this area. Contact your administrator if you think this is a mistake.</p>
+<a class="btn" href="{% url 'home' %}">← Back to my home</a></div>
+{% endblock %}
+{% block public %}
+<div class="card deny"><h1>Access Denied</h1><a class="btn" href="{% url 'accounts:login' %}">Sign in</a></div>
+{% endblock %}

@@ -1,0 +1,40 @@
+{% extends "base.html" %}
+
+{% block title %}Confirm Deletion — CRM-ERP Enterprise Suite{% endblock %}
+
+{% block content %}
+<div class="card deny">
+    <div class="ico">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+            <path d="M3 6h18"></path>
+            <path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"></path>
+            <line x1="10" y1="11" x2="10" y2="17"></line>
+            <line x1="14" y1="11" x2="14" y2="17"></line>
+        </svg>
+    </div>
+
+    <div class="page-eyebrow" style="color: var(--danger);">IRREVERSIBLE ACTION</div>
+    <h1 style="font-size: 20px; margin-bottom: 8px;">Delete this record?</h1>
+
+    <div style="background: var(--bg-secondary); border: 1px solid var(--border-subtle); border-radius: var(--radius-sm); padding: 12px 16px; margin: 16px 0; text-align: left;">
+        <span class="label" style="font-size: 10px;">Target Record</span>
+        <div style="color: var(--text-primary); font-weight: 600; margin-top: 2px;">{{ object }}</div>
+    </div>
+
+    <p class="muted" style="font-size: 13px; line-height: 1.5; margin-bottom: 24px;">
+        This action will permanently delete this record from the database. Linked relationships and activity logs may also be affected. This operation cannot be reversed.
+    </p>
+
+    <form method="post" class="row" style="justify-content: center; gap: 12px;">
+        {% csrf_token %}
+        <button type="submit" class="btn danger">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="width: 14px; height: 14px;">
+                <polyline points="3 6 5 6 21 6"></polyline>
+                <path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"></path>
+            </svg>
+            Confirm Permanent Deletion
+        </button>
+        <a class="btn ghost" href="{{ cancel_url }}">Cancel</a>
+    </form>
+</div>
+{% endblock %}

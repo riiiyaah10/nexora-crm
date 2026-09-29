@@ -1,0 +1,21 @@
+<div class="permission-area">
+    {% for module, items in grid %}
+    <div class="permission-module">
+        <div class="module-title">{{ module }}</div>
+        <div class="permission-list">
+            {% for code, label, checked in items %}
+            <label class="permission-row">
+                <span style="font-size: 13px; color: var(--text-primary);">{{ label }}</span>
+                <input
+                    type="checkbox"
+                    name="perm"
+                    value="{{ code }}"
+                    {% if checked %}checked{% endif %}
+                    aria-label="{{ label }}"
+                >
+            </label>
+            {% endfor %}
+        </div>
+    </div>
+    {% endfor %}
+</div>
