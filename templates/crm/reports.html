@@ -1,0 +1,174 @@
+{% extends "base.html" %}
+
+{% block title %}Reports &amp; Analytics — CRM-ERP{% endblock %}
+
+{% block content %}
+<!-- PAGE HEADER -->
+<div class="page-header">
+    <div class="page-header-content">
+        <div class="page-eyebrow">BUSINESS INTELLIGENCE</div>
+        <h1 class="page-title">Reports &amp; Performance</h1>
+        <p class="page-desc">Comprehensive sales conversion funnel, lead acquisition channels, representative throughput, and financial performance.</p>
+    </div>
+</div>
+
+<!-- TOP KPI CARDS -->
+<div class="kpi-grid" style="display: grid; grid-template-columns: repeat(auto-fit, minmax(220px, 1fr)); gap: 16px; margin-bottom: 24px;">
+    <div class="card" style="padding: 16px 20px;">
+        <div style="font-size: 11px; font-weight: 600; text-transform: uppercase; letter-spacing: 0.05em; color: var(--text-muted); margin-bottom: 6px;">Closed-Won Revenue</div>
+        <div style="font-size: 26px; font-weight: 700; color: #10b981;">₹{{ won_revenue|floatformat:0 }}</div>
+        <div style="font-size: 11px; color: var(--text-secondary); margin-top: 4px;">{{ won_count }} successfully closed deal{{ won_count|pluralize }}</div>
+    </div>
+
+    <div class="card" style="padding: 16px 20px;">
+        <div style="font-size: 11px; font-weight: 600; text-transform: uppercase; letter-spacing: 0.05em; color: var(--text-muted); margin-bottom: 6px;">Active Pipeline Value</div>
+        <div style="font-size: 26px; font-weight: 700; color: var(--accent-light);">₹{{ pipeline_revenue|floatformat:0 }}</div>
+        <div style="font-size: 11px; color: var(--text-secondary); margin-top: 4px;">In-flight opportunities</div>
+    </div>
+
+    <div class="card" style="padding: 16px 20px;">
+        <div style="font-size: 11px; font-weight: 600; text-transform: uppercase; letter-spacing: 0.05em; color: var(--text-muted); margin-bottom: 6px;">Opportunity Win Rate</div>
+        <div style="font-size: 26px; font-weight: 700; color: var(--text-primary);">{{ win_rate }}%</div>
+        <div style="font-size: 11px; color: var(--text-secondary); margin-top: 4px;">{{ won_count }} won / {{ lost_count }} lost</div>
+    </div>
+
+    <div class="card" style="padding: 16px 20px;">
+        <div style="font-size: 11px; font-weight: 600; text-transform: uppercase; letter-spacing: 0.05em; color: var(--text-muted); margin-bottom: 6px;">Total Processed Leads</div>
+        <div style="font-size: 26px; font-weight: 700; color: var(--text-primary);">{{ total_leads }}</div>
+        <div style="font-size: 11px; color: var(--text-secondary); margin-top: 4px;">Across all lifecycle stages</div>
+    </div>
+</div>
+
+<div class="grid" style="display: grid; grid-template-columns: 1fr 1fr; gap: 24px; margin-bottom: 24px;">
+
+    <!-- STAGE CONVERSION FUNNEL -->
+    <div class="card" style="padding: 24px;">
+        <h2 style="font-size: 15px; font-weight: 700; color: var(--text-primary); margin-top: 0; margin-bottom: 16px;">
+            Sales Conversion Funnel
+        </h2>
+        <p style="font-size: 12px; color: var(--text-muted); margin-bottom: 20px;">
+            Distribution of prospects across qualification and closing pipeline stages.
+        </p>
+
+        <div style="display: flex; flex-direction: column; gap: 16px;">
+            {% for item in funnel %}
+            <div>
+                <div style="display: flex; justify-content: space-between; font-size: 12px; font-weight: 600; margin-bottom: 6px;">
+                    <span style="color: var(--text-primary);">{{ item.label }}</span>
+                    <span style="color: var(--text-secondary);">{{ item.count }} leads ({{ item.percentage }}%)</span>
+                </div>
+                <div style="height: 10px; background: var(--surface-elevated); border-radius: 5px; overflow: hidden; border: 1px solid var(--border-subtle);">
+                    <div style="height: 100%; width: {{ item.percentage }}%; background: {% if item.status == 'Won' %}#10b981{% elif item.status == 'Lost' %}#ef4444{% else %}var(--accent){% endif %}; border-radius: 5px; transition: width 0.3s ease;"></div>
+                </div>
+            </div>
+            {% endfor %}
+        </div>
+    </div>
+
+    <!-- REVENUE & INVOICE HEALTH -->
+    <div class="card" style="padding: 24px;">
+        <h2 style="font-size: 15px; font-weight: 700; color: var(--text-primary); margin-top: 0; margin-bottom: 16px;">
+            Billing &amp; Collections Health
+        </h2>
+        <p style="font-size: 12px; color: var(--text-muted); margin-bottom: 20px;">
+            Real-time accounts receivable cash flow status.
+        </p>
+
+        <div style="display: flex; flex-direction: column; gap: 16px;">
+            <div style="display: flex; justify-content: space-between; align-items: center; padding: 14px; background: var(--surface-elevated); border-radius: var(--radius-sm); border: 1px solid var(--border-subtle);">
+                <div>
+                    <div style="font-size: 11px; text-transform: uppercase; color: var(--text-muted); font-weight: 600;">Collected (Paid)</div>
+                    <div style="font-size: 18px; font-weight: 700; color: #10b981; margin-top: 2px;">₹{{ paid_sum|floatformat:0 }}</div>
+                </div>
+                <span class="badge" style="background: rgba(16, 185, 129, 0.1); color: #10b981; border: 1px solid rgba(16, 185, 129, 0.3);">Received</span>
+            </div>
+
+            <div style="display: flex; justify-content: space-between; align-items: center; padding: 14px; background: var(--surface-elevated); border-radius: var(--radius-sm); border: 1px solid var(--border-subtle);">
+                <div>
+                    <div style="font-size: 11px; text-transform: uppercase; color: var(--text-muted); font-weight: 600;">Pending Invoices (Sent)</div>
+                    <div style="font-size: 18px; font-weight: 700; color: var(--accent-light); margin-top: 2px;">₹{{ pending_sum|floatformat:0 }}</div>
+                </div>
+                <span class="badge" style="background: rgba(124, 58, 237, 0.1); color: var(--accent-light); border: 1px solid rgba(124, 58, 237, 0.3);">Awaiting Payment</span>
+            </div>
+
+            <div style="display: flex; justify-content: space-between; align-items: center; padding: 14px; background: var(--surface-elevated); border-radius: var(--radius-sm); border: 1px solid var(--border-subtle);">
+                <div>
+                    <div style="font-size: 11px; text-transform: uppercase; color: var(--text-muted); font-weight: 600;">Overdue Invoices</div>
+                    <div style="font-size: 18px; font-weight: 700; color: #ef4444; margin-top: 2px;">₹{{ overdue_sum|floatformat:0 }}</div>
+                </div>
+                <span class="badge" style="background: rgba(239, 68, 68, 0.1); color: #ef4444; border: 1px solid rgba(239, 68, 68, 0.3);">Action Needed</span>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- REP PERFORMANCE & SOURCE CONVERSION -->
+<div class="grid" style="display: grid; grid-template-columns: 1fr 1fr; gap: 24px;">
+
+    <!-- TEAM LEADERBOARD -->
+    <div class="card" style="padding: 24px;">
+        <h2 style="font-size: 15px; font-weight: 700; color: var(--text-primary); margin-top: 0; margin-bottom: 16px;">
+            Sales Representative Performance
+        </h2>
+
+        <div class="table-wrap">
+            <table>
+                <thead>
+                    <tr>
+                        <th>Representative</th>
+                        <th>Assigned</th>
+                        <th>Won Deals</th>
+                        <th>Won Value</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for rep in rep_stats %}
+                    <tr>
+                        <td>
+                            <span style="font-weight: 600; color: var(--text-primary);">{{ rep.name|default:rep.email }}</span>
+                        </td>
+                        <td><span style="color: var(--text-secondary);">{{ rep.assigned_leads }}</span></td>
+                        <td><span style="color: #10b981; font-weight: 600;">{{ rep.won_deals }}</span></td>
+                        <td><span style="font-family: monospace; font-weight: 600;">₹{{ rep.won_value|default:0|floatformat:0 }}</span></td>
+                    </tr>
+                    {% empty %}
+                    <tr><td colspan="4" style="text-align: center; color: var(--text-muted); padding: 16px;">No rep stats available.</td></tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </div>
+    </div>
+
+    <!-- LEAD SOURCES BREAKDOWN -->
+    <div class="card" style="padding: 24px;">
+        <h2 style="font-size: 15px; font-weight: 700; color: var(--text-primary); margin-top: 0; margin-bottom: 16px;">
+            Lead Acquisition Channels
+        </h2>
+
+        <div class="table-wrap">
+            <table>
+                <thead>
+                    <tr>
+                        <th>Channel / Source</th>
+                        <th>Total Leads</th>
+                        <th>Won Deals</th>
+                        <th>Total Value</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for src in source_stats %}
+                    <tr>
+                        <td><span style="font-weight: 600; color: var(--text-primary);">{{ src.source|default:"Direct" }}</span></td>
+                        <td><span style="color: var(--text-secondary);">{{ src.total }}</span></td>
+                        <td><span style="color: #10b981; font-weight: 600;">{{ src.won }}</span></td>
+                        <td><span style="font-family: monospace; font-weight: 600;">₹{{ src.val|default:0|floatformat:0 }}</span></td>
+                    </tr>
+                    {% empty %}
+                    <tr><td colspan="4" style="text-align: center; color: var(--text-muted); padding: 16px;">No source stats available.</td></tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </div>
+    </div>
+</div>
+{% endblock %}

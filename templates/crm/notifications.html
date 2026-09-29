@@ -1,0 +1,76 @@
+{% extends "base.html" %}
+
+{% block title %}Notification Center — CRM-ERP{% endblock %}
+
+{% block content %}
+<!-- PAGE HEADER -->
+<div class="page-header">
+    <div class="page-header-content">
+        <div class="page-eyebrow">SYSTEM &amp; ACTIVITY ALERTS</div>
+        <h1 class="page-title">Notification Center</h1>
+        <p class="page-desc">Stay informed about lead assignments, task deadlines, client updates, and financial movements.</p>
+    </div>
+    <div class="page-actions">
+        {% if unread_count > 0 %}
+        <form method="post" action="{% url 'crm:notification_read_all' %}">
+            {% csrf_token %}
+            <button type="submit" class="btn ghost sm">
+                Mark all as read
+            </button>
+        </form>
+        {% endif %}
+    </div>
+</div>
+
+<div class="card" style="padding: 0; overflow: hidden;">
+    <div style="padding: 16px 20px; background: var(--surface-elevated); border-bottom: 1px solid var(--border); display: flex; justify-content: space-between; align-items: center;">
+        <span style="font-size: 13px; font-weight: 600; color: var(--text-primary);">
+            Notifications ({{ unread_count }} unread)
+        </span>
+    </div>
+
+    <div style="display: flex; flex-direction: column;">
+        {% for notif in page %}
+        <div style="display: flex; align-items: flex-start; justify-content: space-between; padding: 16px 20px; border-bottom: 1px solid var(--border-subtle); background: {% if not notif.read %}rgba(124, 58, 237, 0.04){% else %}transparent{% endif %};">
+            <div style="display: flex; gap: 14px; align-items: flex-start;">
+                <div style="width: 10px; height: 10px; border-radius: 50%; margin-top: 5px; background: {% if not notif.read %}var(--accent){% else %}transparent{% endif %}; border: 1px solid {% if not notif.read %}var(--accent-light){% else %}var(--border){% endif %};"></div>
+                <div>
+                    <div style="font-size: 13px; font-weight: 600; color: var(--text-primary);">
+                        {{ notif.title }}
+                    </div>
+                    <div style="font-size: 12px; color: var(--text-secondary); margin-top: 3px;">
+                        {{ notif.message }}
+                    </div>
+                    <div style="font-size: 11px; color: var(--text-muted); margin-top: 6px;">
+                        {{ notif.created_at|timesince }} ago
+                    </div>
+                </div>
+            </div>
+
+            <div style="display: flex; align-items: center; gap: 8px;">
+                {% if notif.link %}
+                <a href="{% url 'crm:notification_mark_read' notif.pk %}" class="btn ghost sm" style="padding: 4px 10px;">
+                    View &rarr;
+                </a>
+                {% elif not notif.read %}
+                <a href="{% url 'crm:notification_mark_read' notif.pk %}" class="btn ghost sm" style="padding: 4px 10px;">
+                    Mark read
+                </a>
+                {% endif %}
+            </div>
+        </div>
+        {% empty %}
+        <div style="text-align: center; padding: 48px 24px; color: var(--text-muted);">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" style="width: 40px; height: 40px; margin-bottom: 12px; opacity: 0.4;">
+                <path d="M18 8A6 6 0 0 0 6 8c0 7-3 9-3 9h18s-3-2-3-9"></path>
+                <path d="M13.73 21a2 2 0 0 1-3.46 0"></path>
+            </svg>
+            <div style="font-size: 14px; font-weight: 600; color: var(--text-primary); margin-bottom: 4px;">All caught up!</div>
+            <p style="font-size: 12px;">You have no new notifications.</p>
+        </div>
+        {% endfor %}
+    </div>
+</div>
+
+{% include "partials/pager.html" %}
+{% endblock %}

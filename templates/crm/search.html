@@ -1,0 +1,145 @@
+{% extends "base.html" %}
+
+{% block title %}Omnisearch Results: "{{ q }}" — CRM-ERP{% endblock %}
+
+{% block content %}
+<!-- PAGE HEADER -->
+<div class="page-header">
+    <div class="page-header-content">
+        <div class="page-eyebrow">GLOBAL SEARCH</div>
+        <h1 class="page-title">Search Results</h1>
+        <p class="page-desc">Found {{ total_results }} result{{ total_results|pluralize }} matching query "{{ q }}".</p>
+    </div>
+</div>
+
+<!-- SEARCH BAR -->
+<div class="toolbar" style="margin-bottom: 24px;">
+    <form method="get" action="{% url 'crm:search' %}" style="width: 100%; display: flex; gap: 12px;">
+        <input type="text" name="q" value="{{ q }}" class="input sm" placeholder="Search across leads, contacts, companies, projects..." style="flex: 1;">
+        <button type="submit" class="btn primary sm">Search</button>
+    </form>
+</div>
+
+<div style="display: flex; flex-direction: column; gap: 24px;">
+
+    <!-- LEADS RESULTS -->
+    {% if leads %}
+    <div class="card" style="padding: 20px;">
+        <h2 style="font-size: 14px; font-weight: 700; color: var(--text-primary); margin-top: 0; margin-bottom: 12px;">
+            Leads ({{ leads.count }})
+        </h2>
+        <div class="table-wrap">
+            <table>
+                <thead>
+                    <tr><th>Lead Name</th><th>Company</th><th>Stage</th><th>Value</th><th></th></tr>
+                </thead>
+                <tbody>
+                    {% for l in leads %}
+                    <tr>
+                        <td><strong>{{ l.name }}</strong></td>
+                        <td>{{ l.company|default:"—" }}</td>
+                        <td><span class="badge status-{{ l.status|lower }}">{{ l.status }}</span></td>
+                        <td>₹{{ l.value|floatformat:0 }}</td>
+                        <td style="text-align: right;"><a href="{% url 'leads:detail' l.pk %}" class="btn ghost sm">View</a></td>
+                    </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </div>
+    </div>
+    {% endif %}
+
+    <!-- CONTACTS RESULTS -->
+    {% if contacts %}
+    <div class="card" style="padding: 20px;">
+        <h2 style="font-size: 14px; font-weight: 700; color: var(--text-primary); margin-top: 0; margin-bottom: 12px;">
+            Contacts ({{ contacts.count }})
+        </h2>
+        <div class="table-wrap">
+            <table>
+                <thead>
+                    <tr><th>Contact Name</th><th>Job Title</th><th>Company</th><th>Email</th><th></th></tr>
+                </thead>
+                <tbody>
+                    {% for c in contacts %}
+                    <tr>
+                        <td><strong>{{ c.full_name }}</strong></td>
+                        <td>{{ c.job_title|default:"—" }}</td>
+                        <td>{{ c.company.name|default:"—" }}</td>
+                        <td>{{ c.email|default:"—" }}</td>
+                        <td style="text-align: right;"><a href="{% url 'crm:contact_detail' c.pk %}" class="btn ghost sm">View</a></td>
+                    </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </div>
+    </div>
+    {% endif %}
+
+    <!-- COMPANIES RESULTS -->
+    {% if companies %}
+    <div class="card" style="padding: 20px;">
+        <h2 style="font-size: 14px; font-weight: 700; color: var(--text-primary); margin-top: 0; margin-bottom: 12px;">
+            Companies ({{ companies.count }})
+        </h2>
+        <div class="table-wrap">
+            <table>
+                <thead>
+                    <tr><th>Company</th><th>Domain</th><th>Industry</th><th>Revenue</th><th></th></tr>
+                </thead>
+                <tbody>
+                    {% for comp in companies %}
+                    <tr>
+                        <td><strong>{{ comp.name }}</strong></td>
+                        <td>{{ comp.domain|default:"—" }}</td>
+                        <td>{{ comp.get_industry_display|default:"—" }}</td>
+                        <td>₹{{ comp.annual_revenue|floatformat:0 }}</td>
+                        <td style="text-align: right;"><a href="{% url 'crm:company_detail' comp.pk %}" class="btn ghost sm">View</a></td>
+                    </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </div>
+    </div>
+    {% endif %}
+
+    <!-- PROJECTS RESULTS -->
+    {% if projects %}
+    <div class="card" style="padding: 20px;">
+        <h2 style="font-size: 14px; font-weight: 700; color: var(--text-primary); margin-top: 0; margin-bottom: 12px;">
+            Projects ({{ projects.count }})
+        </h2>
+        <div class="table-wrap">
+            <table>
+                <thead>
+                    <tr><th>Project</th><th>Client</th><th>Status</th><th>Budget</th><th></th></tr>
+                </thead>
+                <tbody>
+                    {% for p in projects %}
+                    <tr>
+                        <td><strong>{{ p.name }}</strong></td>
+                        <td>{{ p.client }}</td>
+                        <td><span class="badge">{{ p.status }}</span></td>
+                        <td>₹{{ p.budget|floatformat:0 }}</td>
+                        <td style="text-align: right;"><a href="{% url 'projects:detail' p.pk %}" class="btn ghost sm">View</a></td>
+                    </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </div>
+    </div>
+    {% endif %}
+
+    {% if total_results == 0 %}
+    <div class="card" style="text-align: center; padding: 48px; color: var(--text-muted);">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" style="width: 40px; height: 40px; margin-bottom: 12px; opacity: 0.4;">
+            <circle cx="11" cy="11" r="8"></circle>
+            <line x1="21" y1="21" x2="16.65" y2="16.65"></line>
+        </svg>
+        <div style="font-size: 15px; font-weight: 600; color: var(--text-primary); margin-bottom: 4px;">No matching results</div>
+        <p style="font-size: 12px;">Try searching for a different keyword or name.</p>
+    </div>
+    {% endif %}
+
+</div>
+{% endblock %}

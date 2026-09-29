@@ -20,6 +20,20 @@ MODULE_PERMS = {
         ("leads.view_all_leads", "See ALL leads"),
     ],
 
+    "Contacts": [
+        ("crm.view_contact", "View contacts"),
+        ("crm.add_contact", "Add contacts"),
+        ("crm.change_contact", "Edit contacts"),
+        ("crm.delete_contact", "Delete contacts"),
+    ],
+
+    "Companies": [
+        ("crm.view_company", "View companies"),
+        ("crm.add_company", "Add companies"),
+        ("crm.change_company", "Edit companies"),
+        ("crm.delete_company", "Delete companies"),
+    ],
+
     "Projects": [
         ("projects.view_project", "View projects"),
         ("projects.add_project", "Add projects"),
@@ -34,6 +48,10 @@ MODULE_PERMS = {
         ("finance.delete_invoice", "Delete invoices"),
         ("finance.add_transaction", "Add income / expenses"),
         ("finance.delete_transaction", "Delete income / expenses"),
+    ],
+
+    "Reports & Analytics": [
+        ("crm.view_reports", "View CRM analytics & reports"),
     ],
 
     "Administration": [
@@ -66,6 +84,18 @@ DEFAULT_ROLES = {
         "leads.delete_lead",
         "leads.view_all_leads",
 
+        "crm.view_contact",
+        "crm.add_contact",
+        "crm.change_contact",
+        "crm.delete_contact",
+
+        "crm.view_company",
+        "crm.add_company",
+        "crm.change_company",
+        "crm.delete_company",
+
+        "crm.view_reports",
+
         "projects.view_project",
     ],
 
@@ -75,6 +105,12 @@ DEFAULT_ROLES = {
         "leads.view_lead",
         "leads.add_lead",
         "leads.change_lead",
+
+        "crm.view_contact",
+        "crm.add_contact",
+        "crm.change_contact",
+
+        "crm.view_company",
     ],
 
     "Project Manager": [
@@ -87,6 +123,9 @@ DEFAULT_ROLES = {
 
         "leads.view_lead",
         "leads.view_all_leads",
+
+        "crm.view_contact",
+        "crm.view_company",
     ],
 
     "Finance": [
@@ -98,13 +137,19 @@ DEFAULT_ROLES = {
         "finance.add_transaction",
         "finance.delete_transaction",
 
+        "crm.view_company",
+        "crm.view_reports",
+
         "projects.view_project",
     ],
 
     "Viewer": [
         "core.view_dashboard",
         "leads.view_lead",
+        "crm.view_contact",
+        "crm.view_company",
         "projects.view_project",
+        "crm.view_reports",
     ],
 }
 

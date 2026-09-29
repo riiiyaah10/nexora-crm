@@ -1,0 +1,277 @@
+{% extends "base.html" %}
+
+{% block title %}{{ company.name }} — Company Account{% endblock %}
+
+{% block content %}
+<!-- PAGE HEADER -->
+<div class="page-header">
+    <div class="page-header-content">
+        <div class="page-eyebrow">COMPANY ACCOUNT · {{ company.get_industry_display|default:company.industry|default:"ENTERPRISE" }}</div>
+        <h1 class="page-title">{{ company.name }}</h1>
+        <p class="page-desc">
+            {% if company.domain %}{{ company.domain }} · {% endif %}
+            Owner: {{ company.owner.name|default:company.owner.email|default:"Unassigned" }} ·
+            Added {{ company.created_at|date:"M d, Y" }}
+        </p>
+    </div>
+    <div class="page-actions">
+        <a class="btn ghost sm" href="{% url 'crm:company_list' %}">
+            &larr; Back to Directory
+        </a>
+        {% if perms.crm.add_contact %}
+        <a class="btn ghost sm" href="{% url 'crm:contact_create' %}?company={{ company.pk }}">
+            + Add Contact
+        </a>
+        {% endif %}
+        {% if perms.crm.change_company %}
+        <a class="btn primary sm" href="{% url 'crm:company_update' company.pk %}">
+            Edit Account
+        </a>
+        {% endif %}
+        {% if perms.crm.delete_company %}
+        <a class="btn danger sm" href="{% url 'crm:company_delete' company.pk %}" style="background: rgba(239, 68, 68, 0.15); color: #ef4444; border: 1px solid rgba(239, 68, 68, 0.3);">
+            Delete
+        </a>
+        {% endif %}
+    </div>
+</div>
+
+<div class="grid" style="display: grid; grid-template-columns: 2fr 1fr; gap: 24px; align-items: start;">
+
+    <!-- LEFT COLUMN: ACCOUNT PROFILE & ASSOCIATIONS -->
+    <div style="display: flex; flex-direction: column; gap: 24px;">
+
+        <!-- DETAILS CARD -->
+        <div class="card" style="padding: 24px;">
+            <h2 style="font-size: 15px; font-weight: 700; color: var(--text-primary); margin-top: 0; margin-bottom: 16px; padding-bottom: 12px; border-bottom: 1px solid var(--border);">
+                Account Overview
+            </h2>
+
+            <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 16px;">
+                <div>
+                    <div style="font-size: 11px; text-transform: uppercase; color: var(--text-muted); font-weight: 600;">Industry</div>
+                    <div style="font-size: 13px; font-weight: 600; color: var(--text-primary); margin-top: 4px;">{{ company.get_industry_display|default:"—" }}</div>
+                </div>
+                <div>
+                    <div style="font-size: 11px; text-transform: uppercase; color: var(--text-muted); font-weight: 600;">Annual Contract / Revenue</div>
+                    <div style="font-size: 13px; font-weight: 600; color: var(--accent-light); margin-top: 4px;">₹{{ company.annual_revenue|floatformat:0 }}</div>
+                </div>
+                <div>
+                    <div style="font-size: 11px; text-transform: uppercase; color: var(--text-muted); font-weight: 600;">Website</div>
+                    <div style="font-size: 13px; margin-top: 4px;">
+                        {% if company.website %}
+                        <a href="{{ company.website }}" target="_blank" rel="noopener" style="color: var(--accent-light); text-decoration: none;">{{ company.website }}</a>
+                        {% else %}—{% endif %}
+                    </div>
+                </div>
+                <div>
+                    <div style="font-size: 11px; text-transform: uppercase; color: var(--text-muted); font-weight: 600;">Phone</div>
+                    <div style="font-size: 13px; color: var(--text-primary); margin-top: 4px;">{{ company.phone|default:"—" }}</div>
+                </div>
+                <div>
+                    <div style="font-size: 11px; text-transform: uppercase; color: var(--text-muted); font-weight: 600;">Email</div>
+                    <div style="font-size: 13px; color: var(--text-primary); margin-top: 4px;">{{ company.email|default:"—" }}</div>
+                </div>
+                <div>
+                    <div style="font-size: 11px; text-transform: uppercase; color: var(--text-muted); font-weight: 600;">Headcount</div>
+                    <div style="font-size: 13px; color: var(--text-primary); margin-top: 4px;">{% if company.employee_count %}{{ company.employee_count }} employees{% else %}—{% endif %}</div>
+                </div>
+            </div>
+
+            {% if company.address %}
+            <div style="margin-top: 16px; padding-top: 12px; border-top: 1px solid var(--border-subtle);">
+                <div style="font-size: 11px; text-transform: uppercase; color: var(--text-muted); font-weight: 600;">Address</div>
+                <div style="font-size: 13px; color: var(--text-secondary); margin-top: 4px; white-space: pre-line;">{{ company.address }}</div>
+            </div>
+            {% endif %}
+
+            {% if company.tags.all %}
+            <div style="margin-top: 16px; display: flex; gap: 6px; flex-wrap: wrap;">
+                {% for tag in company.tags.all %}
+                <span class="badge" style="background: var(--surface-elevated); border: 1px solid var(--border); color: var(--accent-light);">
+                    #{{ tag.name }}
+                </span>
+                {% endfor %}
+            </div>
+            {% endif %}
+        </div>
+
+        <!-- ASSOCIATED CONTACTS -->
+        <div class="card" style="padding: 24px;">
+            <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 16px;">
+                <h2 style="font-size: 15px; font-weight: 700; color: var(--text-primary); margin: 0;">
+                    Associated Contacts ({{ company.contacts.count }})
+                </h2>
+                {% if perms.crm.add_contact %}
+                <a href="{% url 'crm:contact_create' %}?company={{ company.pk }}" class="btn ghost sm">+ Add Contact</a>
+                {% endif %}
+            </div>
+
+            <div class="table-wrap">
+                <table>
+                    <thead>
+                        <tr>
+                            <th>Contact Name</th>
+                            <th>Job Title</th>
+                            <th>Email</th>
+                            <th>Phone</th>
+                            <th></th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {% for c in company.contacts.all %}
+                        <tr>
+                            <td>
+                                <a href="{% url 'crm:contact_detail' c.pk %}" style="font-weight: 600; color: var(--text-primary); text-decoration: none;">
+                                    {{ c.full_name }}
+                                </a>
+                            </td>
+                            <td><span style="color: var(--text-secondary); font-size: 12px;">{{ c.job_title|default:"—" }}</span></td>
+                            <td><span style="color: var(--text-secondary); font-size: 12px;">{{ c.email|default:"—" }}</span></td>
+                            <td><span style="color: var(--text-secondary); font-size: 12px;">{{ c.phone|default:"—" }}</span></td>
+                            <td style="text-align: right;">
+                                <a href="{% url 'crm:contact_detail' c.pk %}" class="btn ghost sm" style="padding: 3px 8px;">View</a>
+                            </td>
+                        </tr>
+                        {% empty %}
+                        <tr>
+                            <td colspan="5" style="text-align: center; color: var(--text-muted); padding: 24px;">
+                                No contacts associated yet.
+                            </td>
+                        </tr>
+                        {% endfor %}
+                    </tbody>
+                </table>
+            </div>
+        </div>
+
+        <!-- LINKED LEADS & PIPELINE -->
+        {% if leads %}
+        <div class="card" style="padding: 24px;">
+            <h2 style="font-size: 15px; font-weight: 700; color: var(--text-primary); margin-top: 0; margin-bottom: 16px;">
+                Pipeline Deals ({{ leads.count }})
+            </h2>
+            <div class="table-wrap">
+                <table>
+                    <thead>
+                        <tr>
+                            <th>Deal / Lead</th>
+                            <th>Stage</th>
+                            <th>Value</th>
+                            <th>Owner</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {% for l in leads %}
+                        <tr>
+                            <td><a href="{% url 'leads:detail' l.pk %}" style="font-weight: 600; color: var(--text-primary); text-decoration: none;">{{ l.name }}</a></td>
+                            <td><span class="badge status-{{ l.status|lower }}">{{ l.status }}</span></td>
+                            <td><span style="font-family: monospace; font-weight: 600;">₹{{ l.value|floatformat:0 }}</span></td>
+                            <td><span style="color: var(--text-secondary); font-size: 12px;">{{ l.owner.name|default:l.owner.email }}</span></td>
+                        </tr>
+                        {% endfor %}
+                    </tbody>
+                </table>
+            </div>
+        </div>
+        {% endif %}
+
+        <!-- LINKED PROJECTS -->
+        {% if projects %}
+        <div class="card" style="padding: 24px;">
+            <h2 style="font-size: 15px; font-weight: 700; color: var(--text-primary); margin-top: 0; margin-bottom: 16px;">
+                Client Projects ({{ projects.count }})
+            </h2>
+            <div class="table-wrap">
+                <table>
+                    <thead>
+                        <tr>
+                            <th>Project</th>
+                            <th>Status</th>
+                            <th>Budget</th>
+                            <th>End Date</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {% for p in projects %}
+                        <tr>
+                            <td><a href="{% url 'projects:detail' p.pk %}" style="font-weight: 600; color: var(--text-primary); text-decoration: none;">{{ p.name }}</a></td>
+                            <td><span class="badge">{{ p.status }}</span></td>
+                            <td><span style="font-family: monospace; font-weight: 600;">₹{{ p.budget|floatformat:0 }}</span></td>
+                            <td><span style="color: var(--text-secondary); font-size: 12px;">{{ p.end_date|default:"Ongoing" }}</span></td>
+                        </tr>
+                        {% endfor %}
+                    </tbody>
+                </table>
+            </div>
+        </div>
+        {% endif %}
+    </div>
+
+    <!-- RIGHT COLUMN: ACTIVITY LOG & TIMELINE -->
+    <div style="display: flex; flex-direction: column; gap: 24px;">
+
+        <!-- QUICK LOG ACTIVITY -->
+        <div class="card" style="padding: 20px;">
+            <h3 style="font-size: 14px; font-weight: 700; color: var(--text-primary); margin-top: 0; margin-bottom: 12px;">
+                Log Account Touchpoint
+            </h3>
+            <form method="post" action="{% url 'crm:activity_create' %}">
+                {% csrf_token %}
+                <input type="hidden" name="company_id" value="{{ company.pk }}">
+                <input type="hidden" name="next" value="{{ request.path }}">
+                
+                <div style="margin-bottom: 12px;">
+                    <label style="font-size: 11px; text-transform: uppercase; color: var(--text-muted); font-weight: 600; display: block; margin-bottom: 4px;">Activity Type</label>
+                    {{ activity_form.kind }}
+                </div>
+                
+                <div style="margin-bottom: 12px;">
+                    <label style="font-size: 11px; text-transform: uppercase; color: var(--text-muted); font-weight: 600; display: block; margin-bottom: 4px;">Subject / Title</label>
+                    {{ activity_form.title }}
+                </div>
+
+                <div style="margin-bottom: 16px;">
+                    <label style="font-size: 11px; text-transform: uppercase; color: var(--text-muted); font-weight: 600; display: block; margin-bottom: 4px;">Notes &amp; Outcomes</label>
+                    {{ activity_form.note }}
+                </div>
+
+                <button type="submit" class="btn primary sm" style="width: 100%; justify-content: center;">
+                    Record Activity
+                </button>
+            </form>
+        </div>
+
+        <!-- UNIFIED TIMELINE -->
+        <div class="card" style="padding: 20px;">
+            <h3 style="font-size: 14px; font-weight: 700; color: var(--text-primary); margin-top: 0; margin-bottom: 16px;">
+                Timeline &amp; Touchpoints
+            </h3>
+
+            <div class="timeline" style="display: flex; flex-direction: column; gap: 16px;">
+                {% for act in company.activities.all %}
+                <div style="padding-left: 12px; border-left: 2px solid var(--accent); position: relative;">
+                    <div style="font-size: 12px; font-weight: 600; color: var(--text-primary);">
+                        {{ act.title }}
+                    </div>
+                    <div style="font-size: 11px; color: var(--text-muted); margin-top: 2px;">
+                        <span class="badge" style="font-size: 10px; padding: 1px 6px;">{{ act.kind }}</span>
+                        by {{ act.user.name|default:act.user.email|default:"System" }} · {{ act.created_at|timesince }} ago
+                    </div>
+                    {% if act.note %}
+                    <div style="font-size: 12px; color: var(--text-secondary); margin-top: 6px; background: var(--surface-elevated); padding: 8px; border-radius: var(--radius-sm); border: 1px solid var(--border-subtle);">
+                        {{ act.note|linebreaksbr }}
+                    </div>
+                    {% endif %}
+                </div>
+                {% empty %}
+                <div style="color: var(--text-muted); font-size: 12px; text-align: center; padding: 16px 0;">
+                    No activities recorded yet.
+                </div>
+                {% endfor %}
+            </div>
+        </div>
+
+    </div>
+</div>
+{% endblock %}

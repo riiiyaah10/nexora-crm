@@ -1,0 +1,80 @@
+{% extends "base.html" %}
+
+{% block title %}Bulk CSV Import — CRM-ERP{% endblock %}
+
+{% block content %}
+<!-- PAGE HEADER -->
+<div class="page-header">
+    <div class="page-header-content">
+        <div class="page-eyebrow">DATA OPERATIONS</div>
+        <h1 class="page-title">Bulk CSV Import</h1>
+        <p class="page-desc">Seamlessly import enterprise records, contacts, and sales prospects into your CRM.</p>
+    </div>
+</div>
+
+<div class="grid" style="display: grid; grid-template-columns: 1fr 1fr; gap: 24px; align-items: start;">
+
+    <!-- IMPORT FORM -->
+    <div class="card" style="padding: 24px;">
+        <h2 style="font-size: 15px; font-weight: 700; color: var(--text-primary); margin-top: 0; margin-bottom: 16px;">
+            Upload Data File
+        </h2>
+
+        <form method="post" enctype="multipart/form-data">
+            {% csrf_token %}
+            
+            <div style="margin-bottom: 16px;">
+                <label style="display: block; font-size: 11px; font-weight: 600; text-transform: uppercase; color: var(--text-muted); margin-bottom: 6px;">Target Destination Module</label>
+                {{ form.target }}
+            </div>
+
+            <div style="margin-bottom: 24px;">
+                <label style="display: block; font-size: 11px; font-weight: 600; text-transform: uppercase; color: var(--text-muted); margin-bottom: 6px;">Select .CSV File</label>
+                {{ form.file }}
+                <div style="font-size: 11px; color: var(--text-muted); margin-top: 4px;">Supports UTF-8 encoded .csv files up to 10MB</div>
+            </div>
+
+            <div style="display: flex; gap: 12px; align-items: center;">
+                <button type="submit" class="btn primary sm">
+                    Start Import
+                </button>
+                <a href="{% url 'dashboard' %}" class="btn ghost sm">Cancel</a>
+            </div>
+        </form>
+    </div>
+
+    <!-- COLUMN MAPPING SCHEMA INSTRUCTIONS -->
+    <div class="card" style="padding: 24px;">
+        <h2 style="font-size: 15px; font-weight: 700; color: var(--text-primary); margin-top: 0; margin-bottom: 16px;">
+            CSV Header Schema Guide
+        </h2>
+
+        <div style="display: flex; flex-direction: column; gap: 16px;">
+            <div style="background: var(--surface-elevated); padding: 12px; border-radius: var(--radius-sm); border: 1px solid var(--border-subtle);">
+                <div style="font-size: 12px; font-weight: 700; color: var(--text-primary); margin-bottom: 4px;">Leads Import Headers:</div>
+                <code style="font-size: 11px; color: var(--accent-light); font-family: monospace;">name, company, email, phone, status, source, value</code>
+                <div style="font-size: 11px; color: var(--text-muted); margin-top: 4px;">
+                    * <strong>name</strong> is mandatory. Valid statuses: New, Contacted, Qualified, Proposal, Won, Lost.
+                </div>
+            </div>
+
+            <div style="background: var(--surface-elevated); padding: 12px; border-radius: var(--radius-sm); border: 1px solid var(--border-subtle);">
+                <div style="font-size: 12px; font-weight: 700; color: var(--text-primary); margin-bottom: 4px;">Contacts Import Headers:</div>
+                <code style="font-size: 11px; color: var(--accent-light); font-family: monospace;">first_name, last_name, email, phone, job_title, company</code>
+                <div style="font-size: 11px; color: var(--text-muted); margin-top: 4px;">
+                    * <strong>first_name</strong> is mandatory. If <strong>company</strong> matches an existing account, it links automatically.
+                </div>
+            </div>
+
+            <div style="background: var(--surface-elevated); padding: 12px; border-radius: var(--radius-sm); border: 1px solid var(--border-subtle);">
+                <div style="font-size: 12px; font-weight: 700; color: var(--text-primary); margin-bottom: 4px;">Companies Import Headers:</div>
+                <code style="font-size: 11px; color: var(--accent-light); font-family: monospace;">name, domain, industry, website, phone</code>
+                <div style="font-size: 11px; color: var(--text-muted); margin-top: 4px;">
+                    * <strong>name</strong> is mandatory. Industry values e.g. Technology, Finance, Healthcare, Retail.
+                </div>
+            </div>
+        </div>
+    </div>
+
+</div>
+{% endblock %}

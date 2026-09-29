@@ -47,6 +47,10 @@
             </a>
             {% endif %}
 
+            <!-- SALES & PIPELINE -->
+            {% if perms.leads.view_lead or perms.crm.view_contact or perms.crm.view_company %}
+            <div class="nav-section">Sales &amp; Pipeline</div>
+
             {% if perms.leads.view_lead %}
             <a class="nav {% if n == 'leads' %}active{% endif %}" href="{% url 'leads:list' %}">
                 <span class="nav-icon" aria-hidden="true">
@@ -61,6 +65,35 @@
             </a>
             {% endif %}
 
+            {% if perms.crm.view_contact %}
+            <a class="nav {% if n == 'crm' and u|slice:':7' == 'contact' %}active{% endif %}" href="{% url 'crm:contact_list' %}">
+                <span class="nav-icon" aria-hidden="true">
+                    <svg viewBox="0 0 24 24" fill="none" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                        <path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"></path>
+                        <circle cx="12" cy="7" r="4"></circle>
+                    </svg>
+                </span>
+                Contacts
+            </a>
+            {% endif %}
+
+            {% if perms.crm.view_company %}
+            <a class="nav {% if n == 'crm' and u|slice:':7' == 'company' %}active{% endif %}" href="{% url 'crm:company_list' %}">
+                <span class="nav-icon" aria-hidden="true">
+                    <svg viewBox="0 0 24 24" fill="none" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                        <rect x="2" y="7" width="20" height="14" rx="2" ry="2"></rect>
+                        <path d="M16 21V5a2 2 0 0 0-2-2h-4a2 2 0 0 0-2 2v16"></path>
+                    </svg>
+                </span>
+                Companies
+            </a>
+            {% endif %}
+            {% endif %}
+
+            <!-- OPERATIONS -->
+            {% if perms.projects.view_project or user.is_authenticated %}
+            <div class="nav-section">Operations</div>
+
             {% if perms.projects.view_project %}
             <a class="nav {% if n == 'projects' %}active{% endif %}" href="{% url 'projects:list' %}">
                 <span class="nav-icon" aria-hidden="true">
@@ -71,6 +104,23 @@
                 Projects
             </a>
             {% endif %}
+
+            <a class="nav {% if n == 'crm' and u == 'calendar' %}active{% endif %}" href="{% url 'crm:calendar' %}">
+                <span class="nav-icon" aria-hidden="true">
+                    <svg viewBox="0 0 24 24" fill="none" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                        <rect x="3" y="4" width="18" height="18" rx="2" ry="2"></rect>
+                        <line x1="16" y1="2" x2="16" y2="6"></line>
+                        <line x1="8" y1="2" x2="8" y2="6"></line>
+                        <line x1="3" y1="10" x2="21" y2="10"></line>
+                    </svg>
+                </span>
+                Calendar
+            </a>
+            {% endif %}
+
+            <!-- FINANCE & INTELLIGENCE -->
+            {% if perms.finance.view_finance or perms.crm.view_reports %}
+            <div class="nav-section">Finance &amp; Analytics</div>
 
             {% if perms.finance.view_finance %}
             <a class="nav {% if n == 'finance' %}active{% endif %}" href="{% url 'finance:overview' %}">
@@ -83,12 +133,24 @@
                 Finance
             </a>
             {% endif %}
-        </nav>
 
-        <!-- ADMINISTRATION SECTION -->
-        {% if perms.accounts.manage_users %}
-        <div class="nav-section">Administration</div>
-        <nav class="admin-nav" aria-label="Administration Navigation">
+            {% if perms.crm.view_reports %}
+            <a class="nav {% if n == 'crm' and u == 'reports' %}active{% endif %}" href="{% url 'crm:reports' %}">
+                <span class="nav-icon" aria-hidden="true">
+                    <svg viewBox="0 0 24 24" fill="none" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                        <line x1="18" y1="20" x2="18" y2="10"></line>
+                        <line x1="12" y1="20" x2="12" y2="4"></line>
+                        <line x1="6" y1="20" x2="6" y2="14"></line>
+                    </svg>
+                </span>
+                Analytics
+            </a>
+            {% endif %}
+            {% endif %}
+
+            <!-- ADMINISTRATION SECTION -->
+            {% if perms.accounts.manage_users %}
+            <div class="nav-section">Administration</div>
             <a class="nav {% if u == 'users' or u == 'user_new' or u == 'user_edit' %}active{% endif %}" href="{% url 'accounts:users' %}">
                 <span class="nav-icon" aria-hidden="true">
                     <svg viewBox="0 0 24 24" fill="none" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
@@ -119,8 +181,8 @@
                 </span>
                 Audit log
             </a>
+            {% endif %}
         </nav>
-        {% endif %}
 
         <!-- SPACER TO PUSH USER DETAILS TO BOTTOM -->
         <div class="sidebar-spacer"></div>
@@ -153,6 +215,58 @@
 
     <!-- ================= MAIN CONTENT ================= -->
     <main>
+        <!-- TOPBAR NAVIGATION -->
+        <header class="topbar">
+            <button class="search-trigger" onclick="openOmnisearch()" type="button" aria-label="Search workspace">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                    <circle cx="11" cy="11" r="8"></circle>
+                    <line x1="21" y1="21" x2="16.65" y2="16.65"></line>
+                </svg>
+                <span>Search leads, accounts, projects...</span>
+                <kbd class="shortcut-kbd">⌘K</kbd>
+            </button>
+
+            <div class="topbar-actions">
+                <!-- Quick Create Dropdown -->
+                <div class="dropdown-wrap" id="quickCreateWrap">
+                    <button class="btn primary sm" type="button" onclick="toggleQuickCreate()" style="gap: 6px;">
+                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" style="width: 13px; height: 13px;">
+                            <line x1="12" y1="5" x2="12" y2="19"></line>
+                            <line x1="5" y1="12" x2="19" y2="12"></line>
+                        </svg>
+                        <span>Create</span>
+                    </button>
+                    <div class="dropdown-menu" id="quickCreateMenu">
+                        {% if perms.leads.add_lead %}
+                        <a href="{% url 'leads:create' %}">+ New Lead</a>
+                        {% endif %}
+                        {% if perms.crm.add_contact %}
+                        <a href="{% url 'crm:contact_create' %}">+ New Contact</a>
+                        {% endif %}
+                        {% if perms.crm.add_company %}
+                        <a href="{% url 'crm:company_create' %}">+ New Company</a>
+                        {% endif %}
+                        {% if perms.projects.add_project %}
+                        <a href="{% url 'projects:create' %}">+ New Project</a>
+                        {% endif %}
+                        <div style="border-top: 1px solid var(--border-subtle); margin: 4px 0;"></div>
+                        <a href="{% url 'crm:import_csv' %}">Import CSV Data</a>
+                    </div>
+                </div>
+
+                <!-- Notifications -->
+                <a href="{% url 'crm:notifications' %}" class="topbar-icon-btn" title="Notifications">
+                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                        <path d="M18 8A6 6 0 0 0 6 8c0 7-3 9-3 9h18s-3-2-3-9"></path>
+                        <path d="M13.73 21a2 2 0 0 1-3.46 0"></path>
+                    </svg>
+                    {% if unread_notif_count %}
+                    <span class="notif-badge">{{ unread_notif_count }}</span>
+                    {% endif %}
+                </a>
+            </div>
+        </header>
+
         <!-- Alerts / Notification Messages -->
         {% if messages %}
             {% for m in messages %}
@@ -166,6 +280,124 @@
         {% endblock %}
     </main>
 </div>
+
+<!-- ================= OMNISEARCH MODAL ================= -->
+<div class="omnisearch-overlay" id="omnisearchOverlay" onclick="if(event.target === this) closeOmnisearch()">
+    <div class="omnisearch-modal" role="dialog" aria-modal="true">
+        <div class="omnisearch-header">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                <circle cx="11" cy="11" r="8"></circle>
+                <line x1="21" y1="21" x2="16.65" y2="16.65"></line>
+            </svg>
+            <input 
+                type="text" 
+                class="omnisearch-input" 
+                id="omnisearchInput" 
+                placeholder="Search leads, contacts, companies, projects, invoices..."
+                autocomplete="off"
+            >
+            <kbd class="shortcut-kbd">ESC</kbd>
+        </div>
+        <div class="omnisearch-body" id="omnisearchResults">
+            <div style="text-align: center; color: var(--text-muted); padding: 28px 16px; font-size: 13px;">
+                Type a name, company, email, or invoice number to search...
+            </div>
+        </div>
+        <div class="omnisearch-footer">
+            <span>Navigation: <kbd class="shortcut-kbd">↑</kbd> <kbd class="shortcut-kbd">↓</kbd> to select</span>
+            <span><kbd class="shortcut-kbd">ESC</kbd> to close</span>
+        </div>
+    </div>
+</div>
+
+<script>
+    // Quick Create Dropdown Handler
+    function toggleQuickCreate() {
+        const menu = document.getElementById("quickCreateMenu");
+        menu.classList.toggle("show");
+    }
+
+    document.addEventListener("click", function(e) {
+        const wrap = document.getElementById("quickCreateWrap");
+        if (wrap && !wrap.contains(e.target)) {
+            const menu = document.getElementById("quickCreateMenu");
+            if (menu) menu.classList.remove("show");
+        }
+    });
+
+    // Omnisearch Modal & Keyboard Shortcut
+    function openOmnisearch() {
+        const overlay = document.getElementById("omnisearchOverlay");
+        const input = document.getElementById("omnisearchInput");
+        overlay.classList.add("show");
+        input.value = "";
+        input.focus();
+    }
+
+    function closeOmnisearch() {
+        const overlay = document.getElementById("omnisearchOverlay");
+        overlay.classList.remove("show");
+    }
+
+    document.addEventListener("keydown", function(e) {
+        if ((e.metaKey || e.ctrlKey) && e.key === "k") {
+            e.preventDefault();
+            const overlay = document.getElementById("omnisearchOverlay");
+            if (overlay.classList.contains("show")) {
+                closeOmnisearch();
+            } else {
+                openOmnisearch();
+            }
+        }
+        if (e.key === "Escape") {
+            closeOmnisearch();
+        }
+    });
+
+    // Omnisearch Live Debounced Fetch
+    let searchTimeout = null;
+    const omnisearchInput = document.getElementById("omnisearchInput");
+    const omnisearchResults = document.getElementById("omnisearchResults");
+
+    if (omnisearchInput) {
+        omnisearchInput.addEventListener("input", function() {
+            clearTimeout(searchTimeout);
+            const query = this.value.trim();
+            if (query.length < 2) {
+                omnisearchResults.innerHTML = '<div style="text-align: center; color: var(--text-muted); padding: 28px 16px; font-size: 13px;">Type at least 2 characters to search...</div>';
+                return;
+            }
+
+            searchTimeout = setTimeout(() => {
+                fetch(`/crm/api/search/?q=${encodeURIComponent(query)}`)
+                    .then(res => res.json())
+                    .then(data => {
+                        if (!data.results || data.results.length === 0) {
+                            omnisearchResults.innerHTML = `<div style="text-align: center; color: var(--text-muted); padding: 28px 16px; font-size: 13px;">No results matching "${query}"</div>`;
+                            return;
+                        }
+
+                        let html = '';
+                        data.results.forEach(group => {
+                            html += `<div class="omnisearch-cat-title">${group.category}</div>`;
+                            group.items.forEach(item => {
+                                html += `
+                                    <a href="${item.url}" class="omnisearch-item">
+                                        <span class="omnisearch-item-title">${item.title}</span>
+                                        <span class="omnisearch-item-subtitle">${item.subtitle}</span>
+                                    </a>
+                                `;
+                            });
+                        });
+                        omnisearchResults.innerHTML = html;
+                    })
+                    .catch(() => {
+                        omnisearchResults.innerHTML = '<div style="text-align: center; color: var(--text-muted); padding: 20px;">Search request failed</div>';
+                    });
+            }, 180);
+        });
+    }
+</script>
 
 {% else %}
 <!-- ================= PUBLIC PAGES (AUTHENTICATION) ================= -->
