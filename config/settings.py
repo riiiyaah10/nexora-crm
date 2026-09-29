@@ -50,6 +50,14 @@ if os.getenv("DATABASE_URL"):
             ssl_require=True,
         )
     }
+    # Resolve host to IPv4 hostaddr to prevent ISP IPv6 NAT64 SYN timeouts
+    if DATABASES["default"].get("HOST"):
+        try:
+            import socket
+            _ipv4 = socket.gethostbyname(DATABASES["default"]["HOST"])
+            DATABASES["default"].setdefault("OPTIONS", {})["hostaddr"] = _ipv4
+        except Exception:
+            pass
 
 elif os.getenv("DB_ENGINE") == "mysql":
     DATABASES = {

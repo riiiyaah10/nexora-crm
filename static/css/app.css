@@ -1,79 +1,144 @@
 /* ==========================================================================
-   CRM-ERP ENTERPRISE DESIGN SYSTEM
-   Theme: Corporate Dark Neutral
-   Exact Color Hierarchy:
-     Background:             #09090B
-     Secondary Background:   #0F0F13
-     Cards:                  #15151B
-     Elevated Cards:         #1B1B22
-     Surface Hover:          #22222A
-     Borders:                #292932
-     Borders Subtle:         #1E1E26
-     Borders Active:         #3D3D48
-     Primary Text:           #F4F4F5
-     Secondary Text:         #A1A1AA
-     Muted Text:             #71717A
-     Accent:                 #7c3aed (Deep violet)
-     Accent Light:           #8b5cf6
-     Accent Glow:            rgba(124, 58, 237, 0.22)
+   NEXORA ENTERPRISE DESIGN SYSTEM
+   Brand: NEXORA — CRM & Business Operations Platform
+   Accent: Enterprise Magenta (#E11D72)
+   Themes: Dark Mode & Light Mode with Theme Switcher Support
    ========================================================================== */
 
 @import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap');
 
-:root {
+/* Default Theme: Dark Mode */
+:root,
+:root[data-theme="dark"] {
   /* Surfaces */
   --bg: #09090B;
-  --bg-secondary: #0F0F13;
-  --surface: #15151B;
-  --surface-elevated: #1B1B22;
-  --surface-hover: #22222A;
+  --bg-secondary: #0D0D12;
+  --surface: #111116;
+  --surface-elevated: #18181F;
+  --surface-hover: #202028;
   
   /* Borders */
-  --border: #292932;
-  --border-subtle: #1E1E26;
-  --border-active: #3D3D48;
-  --border-focus: #7c3aed;
+  --border: #27272F;
+  --border-subtle: #1C1C23;
+  --border-active: #3A3A45;
+  --border-focus: #E11D72;
   
   /* Text */
   --text-primary: #F4F4F5;
   --text-secondary: #A1A1AA;
   --text-muted: #71717A;
   
-  /* Accent / Violet Brand */
-  --accent: #7c3aed;
-  --accent-light: #8b5cf6;
-  --accent-dark: #6d28d9;
-  --accent-gradient: linear-gradient(135deg, #7c3aed 0%, #6366f1 100%);
-  --accent-gradient-hover: linear-gradient(135deg, #8b5cf6 0%, #6d28d9 100%);
-  --accent-soft: rgba(124, 58, 237, 0.12);
-  --accent-glow: 0 0 20px rgba(124, 58, 237, 0.22);
+  /* NEXORA Brand Magenta Palette */
+  --accent: #E11D72;
+  --accent-light: #F43F8A;
+  --accent-dark: #A80F4F;
+  --accent-soft: rgba(225, 29, 114, 0.12);
+  --accent-border: rgba(225, 29, 114, 0.28);
+  --accent-glow: 0 0 20px rgba(225, 29, 114, 0.20);
+  --accent-gradient: linear-gradient(135deg, #E11D72 0%, #A80F4F 100%);
+  --accent-gradient-hover: linear-gradient(135deg, #F43F8A 0%, #E11D72 100%);
   
-  /* Subtle Status Colors (Corporate, not neon) */
+  /* Semantic Status Colors */
   --success: #10b981;
-  --success-soft: rgba(16, 185, 129, 0.10);
-  --success-border: rgba(16, 185, 129, 0.22);
+  --success-soft: rgba(16, 185, 129, 0.12);
+  --success-border: rgba(16, 185, 129, 0.25);
+  --success-text: #6ee7b7;
   
   --danger: #ef4444;
-  --danger-soft: rgba(239, 68, 68, 0.10);
-  --danger-border: rgba(239, 68, 68, 0.22);
+  --danger-soft: rgba(239, 68, 68, 0.12);
+  --danger-border: rgba(239, 68, 68, 0.25);
+  --danger-text: #fca5a5;
   
   --warning: #f59e0b;
-  --warning-soft: rgba(245, 158, 11, 0.10);
-  --warning-border: rgba(245, 158, 11, 0.22);
+  --warning-soft: rgba(245, 158, 11, 0.12);
+  --warning-border: rgba(245, 158, 11, 0.25);
+  --warning-text: #fcd34d;
   
   --info: #3b82f6;
-  --info-soft: rgba(59, 130, 246, 0.10);
-  --info-border: rgba(59, 130, 246, 0.22);
+  --info-soft: rgba(59, 130, 246, 0.12);
+  --info-border: rgba(59, 130, 246, 0.25);
+  --info-text: #93c5fd;
 
-  /* Layout Constants */
+  /* Shadows */
+  --shadow-card: 0 1px 3px rgba(0, 0, 0, 0.5), 0 6px 16px rgba(0, 0, 0, 0.3);
+  --shadow-dropdown: 0 12px 30px rgba(0, 0, 0, 0.75), 0 4px 10px rgba(0, 0, 0, 0.5);
+  --shadow-btn: 0 1px 2px rgba(0, 0, 0, 0.4), inset 0 1px 0 rgba(255, 255, 255, 0.15);
+
+  /* Background Gradient */
+  --bg-mesh: 
+    radial-gradient(ellipse 80% 50% at 50% -20%, rgba(225, 29, 114, 0.07), transparent 70%),
+    radial-gradient(ellipse 50% 40% at 90% 90%, rgba(168, 15, 79, 0.05), transparent 60%);
+}
+
+/* Light Mode Foundation */
+:root[data-theme="light"] {
+  /* Surfaces */
+  --bg: #F6F6F7;
+  --bg-secondary: #ECECEF;
+  --surface: #FFFFFF;
+  --surface-elevated: #FFFFFF;
+  --surface-hover: #F0F0F4;
+  
+  /* Borders */
+  --border: #E4E4E7;
+  --border-subtle: #EBEBEF;
+  --border-active: #D4D4D8;
+  --border-focus: #E11D72;
+  
+  /* Text */
+  --text-primary: #18181B;
+  --text-secondary: #52525B;
+  --text-muted: #71717A;
+  
+  /* NEXORA Brand Magenta Palette */
+  --accent: #E11D72;
+  --accent-light: #F43F8A;
+  --accent-dark: #A80F4F;
+  --accent-soft: rgba(225, 29, 114, 0.08);
+  --accent-border: rgba(225, 29, 114, 0.22);
+  --accent-glow: 0 0 16px rgba(225, 29, 114, 0.15);
+  --accent-gradient: linear-gradient(135deg, #E11D72 0%, #A80F4F 100%);
+  --accent-gradient-hover: linear-gradient(135deg, #F43F8A 0%, #E11D72 100%);
+  
+  /* Semantic Status Colors */
+  --success: #059669;
+  --success-soft: rgba(5, 150, 105, 0.08);
+  --success-border: rgba(5, 150, 105, 0.22);
+  --success-text: #065f46;
+  
+  --danger: #dc2626;
+  --danger-soft: rgba(220, 38, 38, 0.08);
+  --danger-border: rgba(220, 38, 38, 0.22);
+  --danger-text: #991b1b;
+  
+  --warning: #d97706;
+  --warning-soft: rgba(217, 119, 6, 0.08);
+  --warning-border: rgba(217, 119, 6, 0.22);
+  --warning-text: #92400e;
+  
+  --info: #2563eb;
+  --info-soft: rgba(37, 99, 235, 0.08);
+  --info-border: rgba(37, 99, 235, 0.22);
+  --info-text: #1e40af;
+
+  /* Shadows */
+  --shadow-card: 0 1px 3px rgba(0, 0, 0, 0.06), 0 4px 12px rgba(0, 0, 0, 0.03);
+  --shadow-dropdown: 0 10px 25px rgba(0, 0, 0, 0.12), 0 4px 10px rgba(0, 0, 0, 0.06);
+  --shadow-btn: 0 1px 2px rgba(0, 0, 0, 0.12), inset 0 1px 0 rgba(255, 255, 255, 0.2);
+
+  /* Background Gradient */
+  --bg-mesh: 
+    radial-gradient(ellipse 80% 50% at 50% -20%, rgba(225, 29, 114, 0.03), transparent 70%),
+    radial-gradient(ellipse 50% 40% at 90% 90%, rgba(244, 63, 138, 0.02), transparent 60%);
+}
+
+/* Constants shared across themes */
+:root {
   --sidebar-width: 250px;
   --radius-sm: 6px;
   --radius: 8px;
   --radius-md: 10px;
   --radius-lg: 14px;
-  --shadow-card: 0 1px 3px rgba(0, 0, 0, 0.4), 0 6px 16px rgba(0, 0, 0, 0.25);
-  --shadow-dropdown: 0 10px 25px -5px rgba(0, 0, 0, 0.6), 0 8px 10px -6px rgba(0, 0, 0, 0.6);
-  --shadow-btn: 0 1px 2px rgba(0, 0, 0, 0.3), inset 0 1px 0 rgba(255, 255, 255, 0.12);
   --transition: 150ms cubic-bezier(0.16, 1, 0.3, 1);
 }
 
@@ -98,8 +163,8 @@ html, body {
 /* Background Subtle Mesh Gradient */
 body {
   background-image: 
-    radial-gradient(ellipse 80% 50% at 50% -20%, rgba(124, 58, 237, 0.08), transparent 70%),
-    radial-gradient(ellipse 50% 40% at 90% 90%, rgba(99, 102, 241, 0.04), transparent 60%);
+    radial-gradient(ellipse 80% 50% at 50% -20%, rgba(225, 29, 114, 0.08), transparent 70%),
+    radial-gradient(ellipse 50% 40% at 90% 90%, rgba(168, 15, 79, 0.04), transparent 60%);
   background-attachment: fixed;
 }
 
@@ -287,7 +352,7 @@ aside {
   color: #FFFFFF;
   font-weight: 800;
   font-size: 16px;
-  box-shadow: 0 2px 8px rgba(124, 58, 237, 0.4);
+  box-shadow: 0 2px 8px rgba(225, 29, 114, 0.35);
   flex-shrink: 0;
 }
 
@@ -372,8 +437,8 @@ nav {
 
 .nav.active {
   color: #FFFFFF;
-  background: linear-gradient(90deg, rgba(124, 58, 237, 0.18) 0%, rgba(124, 58, 237, 0.04) 100%);
-  border-color: rgba(124, 58, 237, 0.22);
+  background: linear-gradient(90deg, rgba(225, 29, 114, 0.18) 0%, rgba(168, 15, 79, 0.04) 100%);
+  border-color: var(--accent-glow);
   font-weight: 600;
 }
 
@@ -699,7 +764,7 @@ main {
 
 .btn.primary:hover, button:not([class*="btn"]):not([type="button"]):not(.logout-btn):hover {
   background: var(--accent-gradient-hover);
-  box-shadow: 0 4px 14px rgba(124, 58, 237, 0.40);
+  box-shadow: 0 4px 14px rgba(225, 29, 114, 0.40);
 }
 
 .btn.ghost {
@@ -801,7 +866,7 @@ select:focus,
 textarea:focus {
   border-color: var(--accent);
   background-color: var(--surface);
-  box-shadow: 0 0 0 3px rgba(124, 58, 237, 0.18);
+  box-shadow: 0 0 0 3px rgba(225, 29, 114, 0.18);
 }
 
 .input.sm, select.sm {
@@ -1318,8 +1383,8 @@ tbody tr:hover {
 }
 
 .role-badge.system {
-  background-color: rgba(124, 58, 237, 0.12);
-  border-color: rgba(124, 58, 237, 0.25);
+  background-color: var(--accent-soft);
+  border-color: rgba(225, 29, 114, 0.25);
   color: var(--accent-light);
 }
 
@@ -1379,8 +1444,8 @@ tbody tr:hover {
   padding: 32px 16px;
   background-color: var(--bg);
   background-image: 
-    radial-gradient(ellipse 60% 40% at 50% 20%, rgba(124, 58, 237, 0.12), transparent 70%),
-    radial-gradient(ellipse 40% 30% at 85% 80%, rgba(99, 102, 241, 0.05), transparent 60%);
+    radial-gradient(ellipse 60% 40% at 50% 20%, var(--accent-soft), transparent 70%),
+    radial-gradient(ellipse 40% 30% at 85% 80%, rgba(168, 15, 79, 0.05), transparent 60%);
 }
 
 .public-box {
@@ -1775,4 +1840,54 @@ tbody tr:hover {
   color: var(--text-muted);
   display: flex;
   justify-content: space-between;
+}
+
+/* ==========================================================================
+   THEME SWITCHER
+   ========================================================================== */
+.theme-switch {
+  display: inline-flex;
+  align-items: center;
+  background-color: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: var(--radius-sm);
+  padding: 2px;
+  gap: 2px;
+}
+
+.theme-btn {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 28px;
+  height: 28px;
+  padding: 0;
+  border-radius: 4px;
+  border: 1px solid transparent;
+  background-color: transparent;
+  color: var(--text-muted);
+  cursor: pointer;
+  transition: all var(--transition);
+}
+
+.theme-btn:hover {
+  color: var(--text-primary);
+  background-color: var(--surface-hover);
+}
+
+.theme-btn.active {
+  color: var(--accent);
+  background-color: var(--accent-soft);
+  border-color: var(--accent-border);
+}
+
+.theme-btn svg {
+  width: 14px;
+  height: 14px;
+}
+
+.public-theme-pos {
+  position: absolute;
+  top: 20px;
+  right: 20px;
 }

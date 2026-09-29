@@ -4,7 +4,19 @@
 <head>
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1">
-    <title>{% block title %}CRM-ERP Enterprise Suite{% endblock %}</title>
+    <title>{% block title %}NEXORA — CRM & Business Operations Platform{% endblock %}</title>
+
+    <!-- FOUC Prevention Theme Script -->
+    <script>
+        (function() {
+            const saved = localStorage.getItem('nexora_theme') || 'dark';
+            let theme = saved;
+            if (saved === 'system') {
+                theme = window.matchMedia('(prefers-color-scheme: dark)').matches ? 'dark' : 'light';
+            }
+            document.documentElement.setAttribute('data-theme', theme);
+        })();
+    </script>
 
     <!-- Typography: Inter (Corporate Standard) -->
     <link rel="preconnect" href="https://fonts.googleapis.com">
@@ -23,10 +35,10 @@
     <aside>
         <!-- Brand -->
         <div class="brand">
-            <div class="brand-mark">C</div>
+            <div class="brand-mark">N</div>
             <div class="brand-text">
-                <h2>CRM<span>·</span>ERP</h2>
-                <small>Enterprise Workspace</small>
+                <h2>NEXORA</h2>
+                <small>CRM &amp; Business Operations</small>
             </div>
         </div>
 
@@ -254,6 +266,35 @@
                     </div>
                 </div>
 
+                <!-- 3-Way Theme Switcher (Dark / Light / System) -->
+                <div class="theme-switch" role="group" aria-label="Theme mode switcher">
+                    <button type="button" class="theme-btn" data-theme-val="dark" title="Dark theme" onclick="setNexoraTheme('dark')">
+                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                            <path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"></path>
+                        </svg>
+                    </button>
+                    <button type="button" class="theme-btn" data-theme-val="light" title="Light theme" onclick="setNexoraTheme('light')">
+                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                            <circle cx="12" cy="12" r="5"></circle>
+                            <line x1="12" y1="1" x2="12" y2="3"></line>
+                            <line x1="12" y1="21" x2="12" y2="23"></line>
+                            <line x1="4.22" y1="4.22" x2="5.64" y2="5.64"></line>
+                            <line x1="18.36" y1="18.36" x2="19.78" y2="19.78"></line>
+                            <line x1="1" y1="12" x2="3" y2="12"></line>
+                            <line x1="21" y1="12" x2="23" y2="12"></line>
+                            <line x1="4.22" y1="19.78" x2="5.64" y2="18.36"></line>
+                            <line x1="18.36" y1="5.64" x2="19.78" y2="4.22"></line>
+                        </svg>
+                    </button>
+                    <button type="button" class="theme-btn" data-theme-val="system" title="System preference" onclick="setNexoraTheme('system')">
+                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                            <rect x="2" y="3" width="20" height="14" rx="2" ry="2"></rect>
+                            <line x1="8" y1="21" x2="16" y2="21"></line>
+                            <line x1="12" y1="17" x2="12" y2="21"></line>
+                        </svg>
+                    </button>
+                </div>
+
                 <!-- Notifications -->
                 <a href="{% url 'crm:notifications' %}" class="topbar-icon-btn" title="Notifications">
                     <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
@@ -402,6 +443,35 @@
 {% else %}
 <!-- ================= PUBLIC PAGES (AUTHENTICATION) ================= -->
 <div class="public-page">
+    <div class="public-theme-pos">
+        <div class="theme-switch" role="group" aria-label="Theme mode switcher">
+            <button type="button" class="theme-btn" data-theme-val="dark" title="Dark theme" onclick="setNexoraTheme('dark')">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                    <path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"></path>
+                </svg>
+            </button>
+            <button type="button" class="theme-btn" data-theme-val="light" title="Light theme" onclick="setNexoraTheme('light')">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                    <circle cx="12" cy="12" r="5"></circle>
+                    <line x1="12" y1="1" x2="12" y2="3"></line>
+                    <line x1="12" y1="21" x2="12" y2="23"></line>
+                    <line x1="4.22" y1="4.22" x2="5.64" y2="5.64"></line>
+                    <line x1="18.36" y1="18.36" x2="19.78" y2="19.78"></line>
+                    <line x1="1" y1="12" x2="3" y2="12"></line>
+                    <line x1="21" y1="12" x2="23" y2="12"></line>
+                    <line x1="4.22" y1="19.78" x2="5.64" y2="18.36"></line>
+                    <line x1="18.36" y1="5.64" x2="19.78" y2="4.22"></line>
+                </svg>
+            </button>
+            <button type="button" class="theme-btn" data-theme-val="system" title="System preference" onclick="setNexoraTheme('system')">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                    <rect x="2" y="3" width="20" height="14" rx="2" ry="2"></rect>
+                    <line x1="8" y1="21" x2="16" y2="21"></line>
+                    <line x1="12" y1="17" x2="12" y2="21"></line>
+                </svg>
+            </button>
+        </div>
+    </div>
     <div class="public-box">
         {% if messages %}
             {% for m in messages %}
@@ -417,5 +487,40 @@
 </div>
 {% endif %}
 
+
+<!-- ================= GLOBAL THEME LOGIC ================= -->
+<script>
+    function setNexoraTheme(mode) {
+        localStorage.setItem('nexora_theme', mode);
+        applyNexoraTheme(mode);
+    }
+
+    function applyNexoraTheme(mode) {
+        let effective = mode;
+        if (mode === 'system') {
+            effective = window.matchMedia('(prefers-color-scheme: dark)').matches ? 'dark' : 'light';
+        }
+        document.documentElement.setAttribute('data-theme', effective);
+
+        document.querySelectorAll('.theme-btn').forEach(btn => {
+            if (btn.getAttribute('data-theme-val') === mode) {
+                btn.classList.add('active');
+            } else {
+                btn.classList.remove('active');
+            }
+        });
+    }
+
+    document.addEventListener('DOMContentLoaded', function() {
+        const saved = localStorage.getItem('nexora_theme') || 'dark';
+        applyNexoraTheme(saved);
+    });
+
+    window.matchMedia('(prefers-color-scheme: dark)').addEventListener('change', function(e) {
+        if (localStorage.getItem('nexora_theme') === 'system') {
+            applyNexoraTheme('system');
+        }
+    });
+</script>
 </body>
 </html>
