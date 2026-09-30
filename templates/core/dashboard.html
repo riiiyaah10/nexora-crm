@@ -107,6 +107,7 @@
         </div>
         <div class="stat-sub" style="margin-bottom: 16px;">Stage distribution across qualification funnels</div>
 
+        {% if leads_total > 0 %}
         <!-- Horizontal Multi-Color Segmented Bar -->
         <div class="pipeline-bar-wrapper">
             {% for st, count, pct, val in pipe_distribution %}
@@ -134,6 +135,20 @@
             </div>
             {% endfor %}
         </div>
+        {% else %}
+        <div style="text-align: center; padding: 36px 16px; color: var(--text-muted);">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" style="width: 36px; height: 36px; margin-bottom: 10px; opacity: 0.4;">
+                <path d="M16 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"></path>
+                <circle cx="9" cy="7" r="4"></circle>
+                <polyline points="16 11 18 13 22 9"></polyline>
+            </svg>
+            <div style="font-size: 14px; font-weight: 600; color: var(--text-primary); margin-bottom: 4px;">No active deals in pipeline</div>
+            <p style="font-size: 12px; margin-bottom: 14px;">Capture your first qualified prospect to start tracking deals across your sales funnel.</p>
+            {% if perms.leads.add_lead %}
+            <a href="{% url 'leads:create' %}" class="btn primary sm">Add First Lead</a>
+            {% endif %}
+        </div>
+        {% endif %}
     </div>
     {% endif %}
 
@@ -148,6 +163,19 @@
         </div>
         <div class="stat-sub" style="margin-bottom: 18px;">Monthly incoming settled revenue vs incurred operational cost</div>
 
+        {% if fin.income == 0 and fin.expense == 0 %}
+        <div style="text-align: center; padding: 36px 16px; color: var(--text-muted);">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" style="width: 36px; height: 36px; margin-bottom: 10px; opacity: 0.4;">
+                <line x1="12" y1="1" x2="12" y2="23"></line>
+                <path d="M17 5H9.5a3.5 3.5 0 0 0 0 7h5a3.5 3.5 0 0 1 0 7H6"></path>
+            </svg>
+            <div style="font-size: 14px; font-weight: 600; color: var(--text-primary); margin-bottom: 4px;">No cashflow recorded yet</div>
+            <p style="font-size: 12px; margin-bottom: 14px;">Invoices and transactions will populate comparative monthly cash movement.</p>
+            {% if perms.finance.add_transaction %}
+            <a href="{% url 'finance:transaction_create' %}" class="btn primary sm">Add Transaction</a>
+            {% endif %}
+        </div>
+        {% else %}
         {% for m in fin.months %}
         <div class="cashflow-row">
             <div class="cashflow-header">
@@ -164,6 +192,7 @@
             </div>
         </div>
         {% endfor %}
+        {% endif %}
     </div>
     {% endif %}
 </div>
@@ -202,8 +231,13 @@
                 </div>
             </div>
             {% empty %}
-            <div style="text-align: center; padding: 32px 16px; color: var(--text-muted); font-size: 13px;">
-                No client follow-ups currently scheduled.
+            <div style="text-align: center; padding: 32px 16px; color: var(--text-muted);">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" style="width: 32px; height: 32px; margin-bottom: 8px; opacity: 0.4;">
+                    <circle cx="12" cy="12" r="10"></circle>
+                    <polyline points="12 6 12 12 16 14"></polyline>
+                </svg>
+                <div style="font-size: 13px; font-weight: 600; color: var(--text-primary); margin-bottom: 2px;">No follow-ups due</div>
+                <p style="font-size: 12px; margin: 0;">No client touchpoints or qualification calls scheduled for today.</p>
             </div>
             {% endfor %}
         </div>
@@ -254,8 +288,13 @@
                 </div>
             </div>
             {% empty %}
-            <div style="text-align: center; padding: 32px 16px; color: var(--text-muted); font-size: 13px;">
-                You have no open action items assigned.
+            <div style="text-align: center; padding: 32px 16px; color: var(--text-muted);">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" style="width: 32px; height: 32px; margin-bottom: 8px; opacity: 0.4;">
+                    <path d="M22 11.08V12a10 10 0 1 1-5.93-9.14"></path>
+                    <polyline points="22 4 12 14.01 9 11.01"></polyline>
+                </svg>
+                <div style="font-size: 13px; font-weight: 600; color: var(--text-primary); margin-bottom: 2px;">All caught up!</div>
+                <p style="font-size: 12px; margin: 0;">You have no open action items assigned.</p>
             </div>
             {% endfor %}
         </div>

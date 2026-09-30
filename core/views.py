@@ -56,7 +56,24 @@ def dashboard(request):
             for s in LEAD_STATUSES
         ]
 
-        ctx["leads_total"] = qs.count()
+        values = {
+            r["status"]: r["v"] or 0
+            for r in qs.values("status").annotate(v=Sum("value"))
+        }
+
+        total_leads = qs.count()
+
+        ctx["pipe_distribution"] = [
+            (
+                s,
+                counts.get(s, 0),
+                int(counts.get(s, 0) / total_leads * 100) if total_leads > 0 else 0,
+                values.get(s, 0)
+            )
+            for s in LEAD_STATUSES
+        ]
+
+        ctx["leads_total"] = total_leads
         ctx["leads_new"] = counts.get("New", 0)
 
         ctx["won_value"] = (

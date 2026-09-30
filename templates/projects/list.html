@@ -108,8 +108,32 @@
             </tr>
             {% empty %}
             <tr>
-                <td colspan="5" style="text-align: center; padding: 48px 16px; color: var(--text-muted);">
-                    No projects found matching the filter criteria.
+                <td colspan="5" style="text-align: center; padding: 56px 24px;">
+                    <div style="max-width: 420px; margin: 0 auto; display: flex; flex-direction: column; align-items: center;">
+                        <div style="width: 48px; height: 48px; border-radius: var(--radius-sm); background: var(--surface-elevated); border: 1px solid var(--border); display: flex; align-items: center; justify-content: center; margin-bottom: 14px; color: var(--accent-light);">
+                            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" style="width: 24px; height: 24px;">
+                                <rect x="2" y="7" width="20" height="14" rx="2" ry="2"></rect>
+                                <path d="M16 21V5a2 2 0 0 0-2-2h-4a2 2 0 0 0-2 2v16"></path>
+                            </svg>
+                        </div>
+                        {% if q or status %}
+                        <div style="font-size: 15px; font-weight: 600; color: var(--text-primary); margin-bottom: 6px;">No projects match your filter criteria</div>
+                        <p style="font-size: 13px; color: var(--text-muted); margin: 0 0 16px 0; line-height: 1.5;">Try adjusting your keyword search or stage filter to find matching engagements.</p>
+                        <a href="{% url 'projects:list' %}" class="btn ghost sm">Reset Filters</a>
+                        {% else %}
+                        <div style="font-size: 15px; font-weight: 600; color: var(--text-primary); margin-bottom: 6px;">No projects yet</div>
+                        <p style="font-size: 13px; color: var(--text-muted); margin: 0 0 16px 0; line-height: 1.5;">Create your first project to start tracking client workstreams, delivery timelines, and milestone budgets.</p>
+                        {% if perms.projects.add_project %}
+                        <a href="{% url 'projects:create' %}" class="btn primary sm">
+                            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" style="width: 13px; height: 13px;">
+                                <line x1="12" y1="5" x2="12" y2="19"></line>
+                                <line x1="5" y1="12" x2="19" y2="12"></line>
+                            </svg>
+                            Create Project
+                        </a>
+                        {% endif %}
+                        {% endif %}
+                    </div>
                 </td>
             </tr>
             {% endfor %}

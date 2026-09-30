@@ -85,6 +85,19 @@
         <h2 class="sec">Income vs. Expenditures (Last 6 Months)</h2>
         <div class="stat-sub" style="margin-bottom: 20px;">Comparative monthly cash distribution</div>
 
+        {% if s.income == 0 and s.expense == 0 %}
+        <div style="text-align: center; padding: 40px 16px; color: var(--text-muted);">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" style="width: 36px; height: 36px; margin-bottom: 10px; opacity: 0.4;">
+                <line x1="12" y1="1" x2="12" y2="23"></line>
+                <path d="M17 5H9.5a3.5 3.5 0 0 0 0 7h5a3.5 3.5 0 0 1 0 7H6"></path>
+            </svg>
+            <div style="font-size: 14px; font-weight: 600; color: var(--text-primary); margin-bottom: 4px;">No cashflow recorded yet</div>
+            <p style="font-size: 12px; margin-bottom: 14px;">Once invoices are paid or expenses recorded, monthly comparisons will appear here.</p>
+            {% if perms.finance.add_transaction %}
+            <a href="{% url 'finance:transaction_create' %}" class="btn primary sm">Add Transaction</a>
+            {% endif %}
+        </div>
+        {% else %}
         {% for m in s.months %}
         <div class="cashflow-row">
             <div class="cashflow-header">
@@ -101,6 +114,7 @@
             </div>
         </div>
         {% endfor %}
+        {% endif %}
     </div>
 
     <!-- RECENT INVOICES SUMMARY -->
@@ -132,8 +146,16 @@
                 </tr>
                 {% empty %}
                 <tr>
-                    <td colspan="4" style="text-align: center; padding: 24px; color: var(--text-muted);">
-                        No billing statements recorded yet.
+                    <td colspan="4" style="text-align: center; padding: 36px 16px; color: var(--text-muted);">
+                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" style="width: 32px; height: 32px; margin-bottom: 8px; opacity: 0.4;">
+                            <path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"></path>
+                            <polyline points="14 2 14 8 20 8"></polyline>
+                        </svg>
+                        <div style="font-size: 13px; font-weight: 600; color: var(--text-primary); margin-bottom: 2px;">No billing statements recorded yet</div>
+                        <p style="font-size: 12px; margin: 0 0 12px 0;">Create an invoice to bill clients for delivery work.</p>
+                        {% if perms.finance.add_invoice %}
+                        <a href="{% url 'finance:invoice_create' %}" class="btn primary sm">New Invoice</a>
+                        {% endif %}
                     </td>
                 </tr>
                 {% endfor %}

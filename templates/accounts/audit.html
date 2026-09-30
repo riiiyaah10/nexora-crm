@@ -65,8 +65,16 @@
             </tr>
             {% empty %}
             <tr>
-                <td colspan="5" style="text-align: center; padding: 48px 16px; color: var(--text-muted);">
-                    No audit records recorded yet.
+                <td colspan="5" style="text-align: center; padding: 56px 24px;">
+                    <div style="max-width: 420px; margin: 0 auto; display: flex; flex-direction: column; align-items: center;">
+                        <div style="width: 48px; height: 48px; border-radius: var(--radius-sm); background: var(--surface-elevated); border: 1px solid var(--border); display: flex; align-items: center; justify-content: center; margin-bottom: 14px; color: var(--accent-light);">
+                            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" style="width: 24px; height: 24px;">
+                                <path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"></path>
+                            </svg>
+                        </div>
+                        <div style="font-size: 15px; font-weight: 600; color: var(--text-primary); margin-bottom: 6px;">No audit trail events yet</div>
+                        <p style="font-size: 13px; color: var(--text-muted); margin: 0; line-height: 1.5;">Security events, authentication attempts, and operational records will be automatically logged here.</p>
+                    </div>
                 </td>
             </tr>
             {% endfor %}
