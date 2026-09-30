@@ -11,7 +11,7 @@
         <p class="page-desc">Manage business opportunities, qualification stages, expected deal values, and scheduled follow-up touchpoints.</p>
     </div>
     <div class="page-actions">
-        <a class="btn ghost sm" href="{% url 'leads:export' %}?q={{ q }}&status={{ status }}">
+        <a class="btn ghost sm" href="{% url 'leads:export' %}?q={{ q }}&status={{ status }}&source={{ source }}&lead_type={{ lead_type }}">
             <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="width: 14px; height: 14px;">
                 <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"></path>
                 <polyline points="7 10 12 15 17 10"></polyline>
@@ -36,26 +36,44 @@
      ========================================================================== -->
 <div class="toolbar">
     <form method="get" class="toolbar-group">
-        <div style="position: relative; flex: 2; min-width: 240px;">
+        <div style="position: relative; flex: 2; min-width: 220px;">
             <input 
-                type="text"
+                type="text" 
                 class="input sm" 
                 name="q" 
                 value="{{ q }}" 
-                placeholder="Search prospect, company, email, phone..." 
+                placeholder="Search name, company, email, phone..." 
             >
         </div>
 
-        <div style="flex: 1; min-width: 150px;">
+        <div style="flex: 1; min-width: 130px;">
             <select class="input sm" name="status" onchange="this.form.submit()">
-                <option value="">All qualification stages</option>
+                <option value="">All Stages</option>
                 {% for s in statuses %}
                     <option value="{{ s }}" {% if s == status %}selected{% endif %}>{{ s }}</option>
                 {% endfor %}
             </select>
         </div>
 
-        <div style="width: 130px;">
+        <div style="flex: 1; min-width: 120px;">
+            <select class="input sm" name="source" onchange="this.form.submit()">
+                <option value="">All Sources</option>
+                {% for src in sources %}
+                    <option value="{{ src }}" {% if src == source %}selected{% endif %}>{{ src }}</option>
+                {% endfor %}
+            </select>
+        </div>
+
+        <div style="flex: 1; min-width: 110px;">
+            <select class="input sm" name="lead_type" onchange="this.form.submit()">
+                <option value="">All Types</option>
+                {% for lt in lead_types %}
+                    <option value="{{ lt }}" {% if lt == lead_type %}selected{% endif %}>{{ lt }}</option>
+                {% endfor %}
+            </select>
+        </div>
+
+        <div style="width: 120px;">
             <select class="input sm" name="view" onchange="this.form.submit()">
                 <option value="table" {% if view == 'table' %}selected{% endif %}>Table View</option>
                 <option value="board" {% if view == 'board' %}selected{% endif %}>Kanban Board</option>
@@ -65,7 +83,7 @@
         <button type="submit" class="btn primary sm">
             Filter
         </button>
-        {% if q or status %}
+        {% if q or status or source or lead_type %}
         <a href="{% url 'leads:list' %}?view={{ view }}" class="btn ghost sm">
             Reset
         </a>
@@ -99,8 +117,15 @@
                     </span>
                 </div>
 
-                <div class="muted" style="font-size: 11px; margin-bottom: 8px;">
+                <div class="muted" style="font-size: 11px; margin-bottom: 6px;">
                     {{ l.company|default:"Independent Prospect" }}
+                </div>
+
+                <div class="row" style="gap: 6px; margin-bottom: 8px; flex-wrap: wrap;">
+                    <span class="source-chip {{ l.source }}">{{ l.source|default:"Website" }}</span>
+                    <span class="badge {% if l.lead_type == 'Organic' %}type-organic{% else %}type-junk{% endif %}">
+                        {{ l.lead_type }}
+                    </span>
                 </div>
 
                 {% if perms.leads.change_lead %}
@@ -133,49 +158,50 @@
     <table>
         <thead>
             <tr>
-                <th>Prospect / Contact</th>
+                <th>Lead / Contact</th>
+                <th>Phone</th>
+                <th>Email</th>
                 <th>Company</th>
                 <th>Source</th>
+                <th>Type</th>
+                <th>Stage</th>
+                <th>Owner</th>
                 <th>Expected Value</th>
-                <th>Next Follow-up</th>
-                <th>Account Owner</th>
-                <th>Pipeline Stage</th>
             </tr>
         </thead>
         <tbody>
             {% for l in page %}
             <tr>
                 <td>
-                    <div style="font-weight: 600;">
-                        <a href="{% url 'leads:detail' l.pk %}" style="color: var(--text-primary);">
-                            {{ l.name }}
-                        </a>
-                    </div>
-                    <div class="muted" style="font-size: 11px; margin-top: 2px;">
-                        {{ l.email }} &middot; {{ l.phone }}
-                    </div>
+                    <a href="{% url 'leads:detail' l.pk %}" style="font-weight: 600; color: var(--text-primary);">
+                        {{ l.name }}
+                    </a>
                 </td>
                 <td>
-                    <span style="font-weight: 500; color: var(--text-secondary);">
+                    <span style="color: var(--text-secondary); font-size: 12px;">{{ l.phone|default:"—" }}</span>
+                </td>
+                <td>
+                    {% if l.email %}
+                    <a href="mailto:{{ l.email }}" style="color: var(--accent-light); font-size: 12px;">{{ l.email }}</a>
+                    {% else %}
+                    <span class="muted">—</span>
+                    {% endif %}
+                </td>
+                <td>
+                    <span style="font-weight: 500; color: var(--text-secondary); font-size: 12px;">
                         {{ l.company|default:"—" }}
                     </span>
                 </td>
                 <td>
-                    <span class="muted" style="font-size: 12px;">{{ l.source|default:"Direct" }}</span>
+                    <span class="source-chip {{ l.source }}">{{ l.source|default:"Website" }}</span>
                 </td>
                 <td>
-                    <span style="font-weight: 700; color: var(--text-primary);">
-                        ₹{{ l.value|floatformat:0 }}
+                    <span class="badge {% if l.lead_type == 'Organic' %}type-organic{% else %}type-junk{% endif %}">
+                        {{ l.lead_type }}
                     </span>
                 </td>
                 <td>
-                    {% if l.next_followup %}
-                    <span style="font-weight: 500; font-size: 12px; color: var(--accent-light);">
-                        {{ l.next_followup|date:"d M Y" }}
-                    </span>
-                    {% else %}
-                    <span class="muted">—</span>
-                    {% endif %}
+                    <span class="badge {{ l.status }}">{{ l.status }}</span>
                 </td>
                 <td>
                     <span style="font-size: 12px; color: var(--text-secondary);">
@@ -183,12 +209,14 @@
                     </span>
                 </td>
                 <td>
-                    <span class="badge {{ l.status }}">{{ l.status }}</span>
+                    <span style="font-weight: 700; color: var(--text-primary);">
+                        ₹{{ l.value|floatformat:0 }}
+                    </span>
                 </td>
             </tr>
             {% empty %}
             <tr>
-                <td colspan="7" style="text-align: center; padding: 48px 16px; color: var(--text-muted);">
+                <td colspan="9" style="text-align: center; padding: 48px 16px; color: var(--text-muted);">
                     No leads found matching your search criteria.
                 </td>
             </tr>
@@ -196,7 +224,7 @@
         </tbody>
     </table>
 
-    {% include "partials/pager.html" with qs="q="|add:q|add:"&status="|add:status|add:"&view="|add:view|add:"&" %}
+    {% include "partials/pager.html" with qs="q="|add:q|add:"&status="|add:status|add:"&source="|add:source|add:"&lead_type="|add:lead_type|add:"&view="|add:view|add:"&" %}
 </div>
 {% endif %}
 

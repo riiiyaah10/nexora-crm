@@ -7,7 +7,14 @@ from .models import Lead, Activity
 class LeadForm(StyledFormMixin, forms.ModelForm):
     class Meta:
         model = Lead
-        fields = ["name", "company", "email", "phone", "source", "status", "value", "next_followup", "owner", "notes"]
+        fields = ["name", "company", "email", "phone", "source", "lead_type", "status", "value", "next_followup", "owner", "notes"]
+        labels = {
+            "name": "Lead Name",
+            "phone": "Phone Number",
+            "email": "Email Address",
+            "source": "Lead Source",
+            "lead_type": "Lead Type",
+        }
         widgets = {"next_followup": date_widget(), "notes": forms.Textarea(attrs={"rows": 3})}
 
     def __init__(self, *a, user=None, **kw):

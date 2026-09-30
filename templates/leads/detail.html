@@ -14,6 +14,7 @@
         <h1 class="page-title">
             {{ lead.name }}
             <span class="badge {{ lead.status }}">{{ lead.status }}</span>
+            <span class="badge {% if lead.lead_type == 'Organic' %}type-organic{% else %}type-junk{% endif %}">{{ lead.lead_type }}</span>
         </h1>
         <p class="page-desc">Opportunity details, commercial value, touchpoint logs, and scheduled actions for this prospect.</p>
     </div>
@@ -73,11 +74,12 @@
     </div>
 
     <div class="card stat-card">
-        <span class="label">Lead Source</span>
-        <div class="stat" style="font-size: 18px; font-weight: 700; color: var(--text-primary); margin-top: 4px;">
-            {{ lead.source|default:"Direct Referral" }}
+        <span class="label">Lead Source &amp; Type</span>
+        <div class="row" style="gap: 8px; align-items: center; margin-top: 6px;">
+            <span class="source-chip {{ lead.source }}">{{ lead.source|default:"Website" }}</span>
+            <span class="badge {% if lead.lead_type == 'Organic' %}type-organic{% else %}type-junk{% endif %}">{{ lead.lead_type }}</span>
         </div>
-        <div class="stat-sub">Origin channel</div>
+        <div class="stat-sub" style="margin-top: 4px;">Origin channel &amp; classification</div>
     </div>
 
     <div class="card stat-card">
@@ -106,24 +108,45 @@
     <div style="display: flex; flex-direction: column; gap: 20px;">
         <!-- CONTACT & COMPANY PROFILE -->
         <div class="card">
-            <h2 class="sec">Prospect Details</h2>
+            <h2 class="sec">Lead Information</h2>
             
             <div style="display: flex; flex-direction: column; gap: 14px;">
+                <div class="row" style="justify-content: space-between; border-bottom: 1px solid var(--border-subtle); padding-bottom: 10px;">
+                    <span class="muted">Lead Name</span>
+                    <strong style="color: var(--text-primary);">{{ lead.name }}</strong>
+                </div>
+
+                <div class="row" style="justify-content: space-between; border-bottom: 1px solid var(--border-subtle); padding-bottom: 10px;">
+                    <span class="muted">Direct Phone</span>
+                    <span style="color: var(--text-primary); font-weight: 500;">{{ lead.phone|default:"—" }}</span>
+                </div>
+
+                <div class="row" style="justify-content: space-between; border-bottom: 1px solid var(--border-subtle); padding-bottom: 10px;">
+                    <span class="muted">Email Address</span>
+                    {% if lead.email %}
+                    <a href="mailto:{{ lead.email }}" style="color: var(--accent-light); font-weight: 500;">
+                        {{ lead.email }}
+                    </a>
+                    {% else %}
+                    <span class="muted">—</span>
+                    {% endif %}
+                </div>
+
                 <div class="row" style="justify-content: space-between; border-bottom: 1px solid var(--border-subtle); padding-bottom: 10px;">
                     <span class="muted">Company / Organization</span>
                     <strong style="color: var(--text-primary);">{{ lead.company|default:"Independent Prospect" }}</strong>
                 </div>
 
                 <div class="row" style="justify-content: space-between; border-bottom: 1px solid var(--border-subtle); padding-bottom: 10px;">
-                    <span class="muted">Email Address</span>
-                    <a href="mailto:{{ lead.email }}" style="color: var(--accent-light); font-weight: 500;">
-                        {{ lead.email|default:"—" }}
-                    </a>
+                    <span class="muted">Lead Source</span>
+                    <span class="source-chip {{ lead.source }}">{{ lead.source|default:"Website" }}</span>
                 </div>
 
                 <div class="row" style="justify-content: space-between; border-bottom: 1px solid var(--border-subtle); padding-bottom: 10px;">
-                    <span class="muted">Direct Phone</span>
-                    <span style="color: var(--text-primary);">{{ lead.phone|default:"—" }}</span>
+                    <span class="muted">Lead Type</span>
+                    <span class="badge {% if lead.lead_type == 'Organic' %}type-organic{% else %}type-junk{% endif %}">
+                        {{ lead.lead_type }}
+                    </span>
                 </div>
 
                 <div class="row" style="justify-content: space-between; border-bottom: 1px solid var(--border-subtle); padding-bottom: 10px;">

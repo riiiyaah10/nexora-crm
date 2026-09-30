@@ -12,7 +12,7 @@ from core.forms import TaskForm
 from core.permissions import perm_required
 from projects.models import Project
 from .forms import LeadForm, ActivityForm
-from .models import Lead, Activity, STATUSES
+from .models import Lead, Activity, STATUSES, SOURCES, LEAD_TYPES
 from .services import visible_leads
 
 
@@ -20,18 +20,33 @@ def _filtered(request):
     qs = visible_leads(request.user)
     q = request.GET.get("q", "").strip()
     status = request.GET.get("status", "")
+    source = request.GET.get("source", "").strip()
+    lead_type = request.GET.get("lead_type", "").strip()
     if q:
         qs = qs.filter(Q(name__icontains=q) | Q(company__icontains=q) | Q(email__icontains=q) | Q(phone__icontains=q))
     if status in STATUSES:
         qs = qs.filter(status=status)
-    return qs, q, status
+    if source in SOURCES:
+        qs = qs.filter(source=source)
+    if lead_type in LEAD_TYPES:
+        qs = qs.filter(lead_type=lead_type)
+    return qs, q, status, source, lead_type
 
 
 @perm_required("leads.view_lead")
 def lead_list(request):
-    qs, q, status = _filtered(request)
+    qs, q, status, source, lead_type = _filtered(request)
     view = request.GET.get("view", "table")
-    ctx = {"q": q, "status": status, "statuses": STATUSES, "view": view}
+    ctx = {
+        "q": q,
+        "status": status,
+        "statuses": STATUSES,
+        "source": source,
+        "sources": SOURCES,
+        "lead_type": lead_type,
+        "lead_types": LEAD_TYPES,
+        "view": view,
+    }
     if view == "board":
         items = list(qs[:400])
         ctx["columns"] = [(s, [l for l in items if l.status == s]) for s in STATUSES]
@@ -130,12 +145,12 @@ def lead_convert(request, pk):
 
 @perm_required("leads.view_lead")
 def lead_export(request):
-    qs, _, _ = _filtered(request)
+    qs, _, _, _, _ = _filtered(request)
     resp = HttpResponse(content_type="text/csv")
     resp["Content-Disposition"] = 'attachment; filename="leads.csv"'
     w = csv.writer(resp)
-    w.writerow(["Name", "Company", "Email", "Phone", "Source", "Status", "Value", "Next follow-up", "Owner", "Created"])
+    w.writerow(["Name", "Company", "Email", "Phone", "Source", "Type", "Status", "Value", "Next follow-up", "Owner", "Created"])
     for l in qs:
-        w.writerow([l.name, l.company, l.email, l.phone, l.source, l.status, l.value, l.next_followup or "",
+        w.writerow([l.name, l.company, l.email, l.phone, l.source, l.lead_type, l.status, l.value, l.next_followup or "",
                     l.owner or "", l.created_at.date()])
     return resp
