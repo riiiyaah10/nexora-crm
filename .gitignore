@@ -4,5 +4,8 @@ __pycache__/
 *.pyc
 db.sqlite3
 .env
+.env.*
+*.env
 staticfiles/
 .vercel/
+scratch/
