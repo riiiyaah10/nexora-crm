@@ -151,6 +151,14 @@ DEFAULT_ROLES = {
         "projects.view_project",
         "crm.view_reports",
     ],
+
+    "Demo Viewer": [
+        "core.view_dashboard",
+        "leads.view_lead",
+        "crm.view_contact",
+        "crm.view_company",
+        "projects.view_project",
+    ],
 }
 
 

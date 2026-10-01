@@ -264,6 +264,27 @@ def register_verify_view(request):
         }
     )
 
+def demo_login_view(request):
+    """
+    Public entry point for recruiters and portfolio evaluators.
+    Creates or retrieves the dedicated Demo Viewer account, establishes session,
+    and redirects directly to the operational dashboard without requiring email or OTP.
+    """
+    from accounts.services import get_or_create_demo_viewer
+    demo_user = get_or_create_demo_viewer()
+    login(request, demo_user, backend="django.contrib.auth.backends.ModelBackend")
+    request.session["is_demo_mode"] = True
+    messages.info(request, "Welcome to NEXORA! You are browsing in read-only Demo Mode.")
+    return redirect("home")
+
+
+def demo_exit_view(request):
+    """Exit Demo Mode and return to the primary login screen."""
+    logout(request)
+    messages.info(request, "You have exited Demo Mode.")
+    return redirect("accounts:login")
+
+
 @require_POST
 def logout_view(request):
     logout(request)

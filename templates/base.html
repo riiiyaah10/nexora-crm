@@ -227,6 +227,29 @@
 
     <!-- ================= MAIN CONTENT ================= -->
     <main>
+        {% if is_demo_mode %}
+        <!-- PERSISTENT DEMO MODE BANNER -->
+        <div class="demo-topbar-banner" role="banner">
+            <div class="demo-banner-content">
+                <div class="demo-banner-badge">
+                    <span class="demo-dot"></span>
+                    DEMO MODE &mdash; READ ONLY
+                </div>
+                <div class="demo-banner-text">
+                    Changes cannot be saved in demo mode. Full enterprise access is available upon administrative provisioning.
+                </div>
+            </div>
+            <a href="{% url 'accounts:demo_exit' %}" class="btn demo-exit-btn">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="width: 13px; height: 13px;">
+                    <path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4"></path>
+                    <polyline points="16 17 21 12 16 7"></polyline>
+                    <line x1="21" y1="12" x2="9" y2="12"></line>
+                </svg>
+                Exit Demo
+            </a>
+        </div>
+        {% endif %}
+
         <!-- TOPBAR NAVIGATION -->
         <header class="topbar">
             <button class="search-trigger" onclick="openOmnisearch()" type="button" aria-label="Search workspace">
@@ -239,6 +262,8 @@
             </button>
 
             <div class="topbar-actions">
+                {% if not is_demo_mode %}
+                {% if perms.leads.add_lead or perms.crm.add_contact or perms.crm.add_company or perms.projects.add_project %}
                 <!-- Quick Create Dropdown -->
                 <div class="dropdown-wrap" id="quickCreateWrap">
                     <button class="btn primary sm" type="button" onclick="toggleQuickCreate()" style="gap: 6px;">
@@ -265,6 +290,8 @@
                         <a href="{% url 'crm:import_csv' %}">Import CSV Data</a>
                     </div>
                 </div>
+                {% endif %}
+                {% endif %}
 
                 <!-- 3-Way Theme Switcher (Dark / Light / System) -->
                 <div class="theme-switch" role="group" aria-label="Theme mode switcher">

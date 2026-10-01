@@ -79,7 +79,7 @@ def company_detail(request, pk):
     # Linked leads and projects
     leads = Lead.objects.filter(Q(company__iexact=company.name) | Q(contacts__company=company)).distinct()[:10]
     projects = Project.objects.filter(client__iexact=company.name)[:10]
-    invoices = Invoice.objects.filter(client__iexact=company.name).order_by("-due_date")[:10]
+    invoices = Invoice.objects.filter(client__iexact=company.name).order_by("-due_date")[:10] if request.user.has_perm("finance.view_finance") else []
 
     activity_form = UnifiedActivityForm()
 
@@ -329,7 +329,7 @@ def calendar_view(request):
     tasks = Task.objects.filter(due_date__gte=first_day, due_date__lte=last_day).select_related("assigned_to")
     leads = Lead.objects.filter(next_followup__gte=first_day, next_followup__lte=last_day).select_related("owner")
     projects = Project.objects.filter(end_date__gte=first_day, end_date__lte=last_day).select_related("manager")
-    invoices = Invoice.objects.filter(due_date__gte=first_day, due_date__lte=last_day)
+    invoices = Invoice.objects.filter(due_date__gte=first_day, due_date__lte=last_day) if request.user.has_perm("finance.view_finance") else []
 
     events_by_day = {d: [] for d in range(1, num_days + 1)}
 
@@ -551,21 +551,22 @@ def api_search(request):
         })
 
     # 5. Invoices
-    invoices = Invoice.objects.filter(
-        Q(client__icontains=q) | Q(status__icontains=q)
-    )[:5]
-    if invoices.exists():
-        results.append({
-            "category": "Invoices",
-            "items": [
-                {
-                    "title": f"Invoice #{inv.pk} · {inv.client}",
-                    "subtitle": f"₹{inv.amount:,.0f} · {inv.status} (Due {inv.due_date})",
-                    "url": reverse("finance:invoices"),
-                }
-                for inv in invoices
-            ]
-        })
+    if request.user.has_perm("finance.view_finance"):
+        invoices = Invoice.objects.filter(
+            Q(client__icontains=q) | Q(status__icontains=q)
+        )[:5]
+        if invoices.exists():
+            results.append({
+                "category": "Invoices",
+                "items": [
+                    {
+                        "title": f"Invoice #{inv.pk} · {inv.client}",
+                        "subtitle": f"₹{inv.amount:,.0f} · {inv.status} (Due {inv.due_date})",
+                        "url": reverse("finance:invoices"),
+                    }
+                    for inv in invoices
+                ]
+            })
 
     return JsonResponse({"results": results})
 
@@ -634,6 +635,10 @@ def notification_read_all(request):
 
 @login_required
 def import_csv(request):
+    if getattr(request.user, "role", "") == "Demo Viewer" or request.user.groups.filter(name="Demo Viewer").exists():
+        from django.core.exceptions import PermissionDenied
+        raise PermissionDenied
+
     if request.method == "POST":
         form = CSVImportForm(request.POST, request.FILES)
         if form.is_valid():
@@ -764,6 +769,10 @@ def import_csv(request):
 
 @login_required
 def export_contacts_csv(request):
+    if getattr(request.user, "role", "") == "Demo Viewer" or request.user.groups.filter(name="Demo Viewer").exists():
+        from django.core.exceptions import PermissionDenied
+        raise PermissionDenied
+
     if not request.user.has_perm("crm.view_contact"):
         messages.error(request, "Permission denied.")
         return redirect("crm:contact_list")
@@ -790,6 +799,10 @@ def export_contacts_csv(request):
 
 @login_required
 def export_companies_csv(request):
+    if getattr(request.user, "role", "") == "Demo Viewer" or request.user.groups.filter(name="Demo Viewer").exists():
+        from django.core.exceptions import PermissionDenied
+        raise PermissionDenied
+
     if not request.user.has_perm("crm.view_company"):
         messages.error(request, "Permission denied.")
         return redirect("crm:company_list")

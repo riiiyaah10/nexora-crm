@@ -15,6 +15,15 @@
         <div class="row" style="justify-content: space-between; align-items: center; padding: 10px 12px; background: var(--bg-secondary); border: 1px solid var(--border-subtle); border-radius: var(--radius-sm); transition: border-color var(--transition);">
             <!-- TASK STATUS TOGGLE & TITLE -->
             <div class="row" style="gap: 12px; flex: 1; min-width: 0;">
+                {% if is_demo_mode %}
+                <span class="btn ghost sm" style="padding: 0; width: 22px; height: 22px; min-height: 22px; border-radius: 4px; display: inline-flex; align-items: center; justify-content: center; cursor: default; background: {% if t.done %}var(--accent){% else %}var(--surface){% endif %}; border-color: {% if t.done %}var(--accent){% else %}var(--border){% endif %};" title="Task status cannot be modified in Demo Mode">
+                    {% if t.done %}
+                    <svg viewBox="0 0 24 24" fill="none" stroke="#FFFFFF" stroke-width="3" stroke-linecap="round" stroke-linejoin="round" style="width: 12px; height: 12px;">
+                        <polyline points="20 6 9 17 4 12"></polyline>
+                    </svg>
+                    {% endif %}
+                </span>
+                {% else %}
                 <form method="post" action="{% url 'task_toggle' t.pk %}" style="display: inline-flex; margin: 0;">
                     {% csrf_token %}
                     <input type="hidden" name="next" value="{{ request.get_full_path }}">
@@ -28,6 +37,7 @@
                         {% endif %}
                     </button>
                 </form>
+                {% endif %}
 
                 <div style="display: flex; flex-direction: column; gap: 2px; min-width: 0; flex: 1;">
                     <span style="font-size: 13px; font-weight: 500; {% if t.done %}text-decoration: line-through; color: var(--text-muted);{% endif %} overflow: hidden; text-overflow: ellipsis; white-space: nowrap;">
@@ -54,6 +64,7 @@
                 </div>
             </div>
 
+            {% if not is_demo_mode %}
             <!-- DELETE TASK -->
             <form method="post" action="{% url 'task_delete' t.pk %}" style="margin: 0;">
                 {% csrf_token %}
@@ -65,6 +76,7 @@
                     </svg>
                 </button>
             </form>
+            {% endif %}
         </div>
         {% empty %}
         <div style="text-align: center; padding: 24px 16px; background: var(--bg-secondary); border: 1px dashed var(--border-subtle); border-radius: var(--radius-sm); color: var(--text-muted); font-size: 13px;">
@@ -73,6 +85,11 @@
         {% endfor %}
     </div>
 
+    {% if is_demo_mode %}
+    <div style="padding: 10px 14px; background: var(--bg-secondary); border: 1px dashed var(--border-subtle); border-radius: var(--radius-sm); font-size: 12px; color: var(--text-muted); text-align: center;">
+        Task creation is disabled in read-only Demo Mode.
+    </div>
+    {% else %}
     <!-- INLINE TASK CREATION FORM -->
     <form method="post" action="{% url 'task_create' %}" style="padding-top: 16px; border-top: 1px solid var(--border-subtle);">
         {% csrf_token %}
@@ -102,4 +119,5 @@
             </button>
         </div>
     </form>
+    {% endif %}
 </div>

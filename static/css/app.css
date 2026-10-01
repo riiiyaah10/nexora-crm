@@ -1947,3 +1947,254 @@ tbody tr:hover {
   top: 20px;
   right: 20px;
 }
+
+/* ==========================================================================
+   DEMO MODE ENTERPRISE STYLING
+   ========================================================================== */
+
+/* 1. Login Page Demo Box */
+.demo-login-box {
+  margin-top: 22px;
+  padding: 18px 20px;
+  background-color: var(--surface-elevated);
+  border: 1px solid var(--accent-border);
+  border-radius: var(--radius-md);
+  box-shadow: 0 4px 16px rgba(0, 0, 0, 0.25);
+  text-align: left;
+  position: relative;
+  overflow: hidden;
+}
+
+.demo-login-box::before {
+  content: "";
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 3px;
+  background: var(--accent-gradient);
+}
+
+.demo-badge {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  font-size: 10px;
+  font-weight: 700;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  color: var(--accent-light);
+  background-color: var(--accent-soft);
+  border: 1px solid var(--accent-border);
+  padding: 3px 8px;
+  border-radius: var(--radius-full);
+  margin-bottom: 10px;
+}
+
+.demo-dot {
+  width: 6px;
+  height: 6px;
+  border-radius: 50%;
+  background-color: var(--accent);
+  box-shadow: 0 0 8px var(--accent);
+  animation: pulse-dot 2s infinite;
+}
+
+@keyframes pulse-dot {
+  0% { transform: scale(0.95); opacity: 0.8; }
+  50% { transform: scale(1.2); opacity: 1; }
+  100% { transform: scale(0.95); opacity: 0.8; }
+}
+
+.demo-title {
+  font-size: 15px;
+  font-weight: 700;
+  color: var(--text-primary);
+  margin-bottom: 8px;
+  letter-spacing: -0.01em;
+}
+
+.demo-text {
+  font-size: 12.5px;
+  line-height: 1.5;
+  color: var(--text-secondary);
+  margin: 0 0 10px 0;
+}
+
+.demo-subtext {
+  font-size: 11px;
+  line-height: 1.45;
+  color: var(--text-muted);
+  margin: 0 0 16px 0;
+  padding-top: 10px;
+  border-top: 1px solid var(--border-subtle);
+}
+
+.demo-btn {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  width: 100%;
+  min-height: 40px;
+  padding: 8px 16px;
+  font-size: 13px;
+  font-weight: 600;
+  color: #FFFFFF !important;
+  background: var(--accent-gradient);
+  border: 1px solid var(--accent-dark);
+  border-radius: var(--radius-sm);
+  text-decoration: none;
+  cursor: pointer;
+  transition: all var(--transition);
+  box-shadow: 0 2px 8px rgba(225, 29, 114, 0.25);
+}
+
+.demo-btn:hover {
+  background: var(--accent-gradient-hover);
+  box-shadow: 0 4px 14px rgba(225, 29, 114, 0.35);
+  transform: translateY(-1px);
+}
+
+/* 2. Persistent Top Banner across CRM */
+.demo-topbar-banner {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 16px;
+  padding: 10px 24px;
+  background: linear-gradient(90deg, rgba(225, 29, 114, 0.14) 0%, rgba(17, 17, 22, 0.95) 100%);
+  border-bottom: 1px solid var(--accent-border);
+  position: sticky;
+  top: 0;
+  z-index: 95;
+  backdrop-filter: blur(8px);
+}
+
+:root[data-theme="light"] .demo-topbar-banner {
+  background: linear-gradient(90deg, rgba(225, 29, 114, 0.08) 0%, rgba(248, 250, 252, 0.95) 100%);
+}
+
+.demo-banner-content {
+  display: flex;
+  align-items: center;
+  gap: 14px;
+  flex: 1;
+  min-width: 0;
+}
+
+.demo-banner-badge {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  font-size: 11px;
+  font-weight: 700;
+  letter-spacing: 0.06em;
+  color: #FFFFFF;
+  background-color: var(--accent);
+  padding: 4px 10px;
+  border-radius: var(--radius-sm);
+  white-space: nowrap;
+}
+
+.demo-banner-text {
+  font-size: 12.5px;
+  color: var(--text-secondary);
+  font-weight: 500;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.demo-exit-btn {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  padding: 5px 12px;
+  font-size: 12px;
+  font-weight: 600;
+  color: var(--text-primary) !important;
+  background-color: var(--surface-elevated);
+  border: 1px solid var(--border-active);
+  border-radius: var(--radius-sm);
+  text-decoration: none;
+  white-space: nowrap;
+  transition: all var(--transition);
+}
+
+.demo-exit-btn:hover {
+  background-color: var(--accent-soft);
+  border-color: var(--accent-border);
+  color: var(--accent-light) !important;
+}
+
+/* 3. Dashboard Informational Card */
+.demo-info-card {
+  margin-bottom: 24px;
+  padding: 18px 22px;
+  background: linear-gradient(135deg, rgba(225, 29, 114, 0.08) 0%, var(--surface) 100%);
+  border: 1px solid var(--accent-border);
+  border-radius: var(--radius-md);
+  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.2);
+}
+
+.demo-info-card-header {
+  display: flex;
+  align-items: center;
+  gap: 16px;
+  flex-wrap: wrap;
+}
+
+.demo-info-icon {
+  width: 42px;
+  height: 42px;
+  border-radius: var(--radius-sm);
+  background-color: var(--accent-soft);
+  border: 1px solid var(--accent-border);
+  color: var(--accent-light);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+}
+
+.demo-info-title {
+  font-size: 15px;
+  font-weight: 700;
+  color: var(--text-primary);
+  margin-bottom: 4px;
+}
+
+.demo-info-desc {
+  font-size: 12.5px;
+  line-height: 1.5;
+  color: var(--text-secondary);
+  margin: 0;
+}
+
+.demo-exit-cta {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  padding: 8px 16px;
+  font-size: 12.5px;
+  font-weight: 600;
+  color: #FFFFFF !important;
+  background-color: var(--accent);
+  border: 1px solid var(--accent-dark);
+  border-radius: var(--radius-sm);
+  text-decoration: none;
+  white-space: nowrap;
+  transition: all var(--transition);
+}
+
+.demo-exit-cta:hover {
+  background-color: var(--accent-light);
+}
+
+/* 4. Disabled Notes */
+.demo-disabled-note {
+  font-size: 12px;
+  color: var(--text-muted);
+  font-style: italic;
+}

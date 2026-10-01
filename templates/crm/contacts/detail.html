@@ -139,6 +139,12 @@
     <div style="display: flex; flex-direction: column; gap: 24px;">
 
         <!-- QUICK LOG ACTIVITY -->
+        {% if is_demo_mode %}
+        <div class="card" style="padding: 20px; text-align: center; border: 1px dashed var(--border);">
+            <div style="font-size: 13px; font-weight: 600; color: var(--text-primary); margin-bottom: 4px;">Activity Logging Disabled</div>
+            <p style="font-size: 12px; color: var(--text-muted); margin: 0;">Touchpoint logging and timeline updates are disabled in read-only Demo Mode.</p>
+        </div>
+        {% else %}
         <div class="card" style="padding: 20px;">
             <h3 style="font-size: 14px; font-weight: 700; color: var(--text-primary); margin-top: 0; margin-bottom: 12px;">
                 Log Contact Touchpoint
@@ -168,6 +174,7 @@
                 </button>
             </form>
         </div>
+        {% endif %}
 
         <!-- UNIFIED TIMELINE -->
         <div class="card" style="padding: 20px;">

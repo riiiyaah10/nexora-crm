@@ -145,6 +145,9 @@ def lead_convert(request, pk):
 
 @perm_required("leads.view_lead")
 def lead_export(request):
+    if getattr(request.user, "role", "") == "Demo Viewer" or request.user.groups.filter(name="Demo Viewer").exists():
+        from django.core.exceptions import PermissionDenied
+        raise PermissionDenied
     qs, _, _, _, _ = _filtered(request)
     resp = HttpResponse(content_type="text/csv")
     resp["Content-Disposition"] = 'attachment; filename="leads.csv"'

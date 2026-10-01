@@ -11,6 +11,7 @@
         <p class="page-desc">Manage business opportunities, qualification stages, expected deal values, and scheduled follow-up touchpoints.</p>
     </div>
     <div class="page-actions">
+        {% if not is_demo_mode %}
         <a class="btn ghost sm" href="{% url 'leads:export' %}?q={{ q }}&status={{ status }}&source={{ source }}&lead_type={{ lead_type }}">
             <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="width: 14px; height: 14px;">
                 <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"></path>
@@ -19,6 +20,7 @@
             </svg>
             Export CSV
         </a>
+        {% endif %}
         {% if perms.leads.add_lead %}
         <a class="btn primary sm" href="{% url 'leads:create' %}">
             <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" style="width: 14px; height: 14px;">

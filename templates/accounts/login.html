@@ -22,9 +22,30 @@
         </button>
     </form>
 
-    <div style="text-align: center; margin-top: 24px; padding-top: 20px; border-top: 1px solid var(--border-subtle); font-size: 13px; color: var(--text-muted);">
+    <div style="text-align: center; margin-top: 20px; padding-top: 16px; border-top: 1px solid var(--border-subtle); font-size: 13px; color: var(--text-muted);">
         Don't have an account?
         <a href="{% url 'accounts:register' %}" style="color: var(--accent-light); font-weight: 500; margin-left: 4px;">Create an account</a>
+    </div>
+
+    <!-- EXPLORE NEXORA DEMO MODE -->
+    <div class="demo-login-box">
+        <div class="demo-badge">
+            <span class="demo-dot"></span>
+            PORTFOLIO &amp; RECRUITER ACCESS
+        </div>
+        <div class="demo-title">Explore NEXORA Demo</div>
+        <p class="demo-text">
+            This is a read-only demonstration of NEXORA. Explore the CRM interface and core functionality without creating an account or receiving an OTP. Changes cannot be saved in demo mode.
+        </p>
+        <p class="demo-subtext">
+            Access to the complete production CRM, live lead generation, internal projects, financial operations, user administration, and automated email notifications is available to authorized team members and clients upon deployment or administrative provisioning.
+        </p>
+        <a href="{% url 'accounts:demo_login' %}" class="btn demo-btn">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" style="width: 15px; height: 15px;">
+                <polygon points="5 3 19 12 5 21 5 3"></polygon>
+            </svg>
+            View Live Demo
+        </a>
     </div>
 </div>
 {% endblock %}
