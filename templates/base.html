@@ -3,7 +3,7 @@
 <html lang="en">
 <head>
     <meta charset="utf-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
     <title>{% block title %}NEXORA — CRM & Business Operations Platform{% endblock %}</title>
 
     <!-- FOUC Prevention Theme Script -->
@@ -31,8 +31,11 @@
 {% if user.is_authenticated %}
 <div class="layout">
 
+    <!-- Mobile Drawer Backdrop Overlay -->
+    <div class="sidebar-backdrop" id="sidebarBackdrop" onclick="toggleMobileNav(false)" aria-hidden="true"></div>
+
     <!-- ================= SIDEBAR ================= -->
-    <aside>
+    <aside id="mainSidebar">
         <!-- Brand -->
         <div class="brand">
             <div class="brand-mark">N</div>
@@ -40,6 +43,13 @@
                 <h2>NEXORA</h2>
                 <small>CRM &amp; Business Operations</small>
             </div>
+            <!-- Mobile Close Button -->
+            <button type="button" class="mobile-nav-close" onclick="toggleMobileNav(false)" aria-label="Close navigation menu">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                    <line x1="18" y1="6" x2="6" y2="18"></line>
+                    <line x1="6" y1="6" x2="18" y2="18"></line>
+                </svg>
+            </button>
         </div>
 
         {% with n=request.resolver_match.namespace u=request.resolver_match.url_name %}
@@ -252,12 +262,26 @@
 
         <!-- TOPBAR NAVIGATION -->
         <header class="topbar">
+            <div class="topbar-left">
+                <button type="button" class="mobile-nav-toggle" onclick="toggleMobileNav(true)" aria-label="Open navigation menu">
+                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                        <line x1="3" y1="12" x2="21" y2="12"></line>
+                        <line x1="3" y1="6" x2="21" y2="6"></line>
+                        <line x1="3" y1="18" x2="21" y2="18"></line>
+                    </svg>
+                </button>
+                <div class="mobile-brand">
+                    <div class="brand-mark sm">N</div>
+                    <span class="mobile-brand-name">NEXORA</span>
+                </div>
+            </div>
+
             <button class="search-trigger" onclick="openOmnisearch()" type="button" aria-label="Search workspace">
                 <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
                     <circle cx="11" cy="11" r="8"></circle>
                     <line x1="21" y1="21" x2="16.65" y2="16.65"></line>
                 </svg>
-                <span>Search leads, accounts, projects...</span>
+                <span class="search-trigger-text">Search leads, accounts, projects...</span>
                 <kbd class="shortcut-kbd">⌘K</kbd>
             </button>
 
@@ -407,6 +431,26 @@
         overlay.classList.remove("show");
     }
 
+    // Mobile Navigation Drawer Handler
+    function toggleMobileNav(open) {
+        if (open) {
+            document.body.classList.add('mobile-nav-open');
+        } else {
+            document.body.classList.remove('mobile-nav-open');
+        }
+    }
+
+    document.addEventListener("DOMContentLoaded", function() {
+        const sidebarLinks = document.querySelectorAll("aside nav a, aside .logout-btn");
+        sidebarLinks.forEach(function(link) {
+            link.addEventListener("click", function() {
+                if (window.innerWidth <= 900) {
+                    toggleMobileNav(false);
+                }
+            });
+        });
+    });
+
     document.addEventListener("keydown", function(e) {
         if ((e.metaKey || e.ctrlKey) && e.key === "k") {
             e.preventDefault();
@@ -419,6 +463,7 @@
         }
         if (e.key === "Escape") {
             closeOmnisearch();
+            toggleMobileNav(false);
         }
     });
 
