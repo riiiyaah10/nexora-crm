@@ -275,12 +275,15 @@ def ensure_demo_dataset(demo_user):
 def get_or_create_demo_viewer():
     """
     Get or create the dedicated Demo Viewer user, ensure Demo Viewer role/permissions,
-    and seed the idempotent demo dataset.
+    and seed the idempotent demo dataset only on initial provisioning.
     """
     User = get_user_model()
-    group = setup_demo_viewer_role()
+    existing = User.objects.filter(email=DEMO_EMAIL).first()
+    if existing:
+        return existing
 
-    user, created = User.objects.get_or_create(
+    group = setup_demo_viewer_role()
+    user, _ = User.objects.get_or_create(
         email=DEMO_EMAIL,
         defaults={
             "name": DEMO_NAME,
@@ -289,16 +292,6 @@ def get_or_create_demo_viewer():
             "is_superuser": False,
         }
     )
-
-    # Ensure clean state and role assignment
-    if user.name != DEMO_NAME or not user.is_active:
-        user.name = DEMO_NAME
-        user.is_active = True
-        user.save(update_fields=["name", "is_active"])
-
     user.groups.set([group])
-
-    # Ensure dataset is present
     ensure_demo_dataset(user)
-
     return user
