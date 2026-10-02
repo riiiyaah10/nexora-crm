@@ -24,11 +24,12 @@ class DemoModeReadOnlyMiddleware:
         is_demo = False
 
         if request.user.is_authenticated:
-            is_demo = (
-                getattr(request.user, "role", "") == "Demo Viewer"
-                or request.user.groups.filter(name="Demo Viewer").exists()
-                or bool(request.session.get("is_demo_mode", False))
-            )
+            if request.session.get("is_demo_mode", False):
+                is_demo = True
+            elif getattr(request.user, "role", "") == "Demo Viewer":
+                is_demo = True
+            else:
+                is_demo = False
 
         request.is_demo_mode = is_demo
 

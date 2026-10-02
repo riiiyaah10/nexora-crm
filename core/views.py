@@ -1,4 +1,5 @@
 from django.contrib import messages
+from django.core.cache import cache
 from django.core.exceptions import PermissionDenied
 from django.db.models import Count, F, Sum
 from django.shortcuts import get_object_or_404, redirect, render
@@ -32,7 +33,23 @@ def home(request):
 
 @perm_required("core.view_dashboard")
 def dashboard(request):
-    u, ctx = request.user, {}
+    u = request.user
+    cache_key = f"dashboard_ctx_{u.pk}"
+    ctx = cache.get(cache_key)
+
+    if ctx is None:
+        ctx = _build_dashboard_context(u)
+        cache.set(cache_key, ctx, 60)
+
+    return render(
+        request,
+        "core/dashboard.html",
+        ctx
+    )
+
+
+def _build_dashboard_context(u):
+    ctx = {}
 
     # -------------------------
     # LEADS
@@ -40,12 +57,15 @@ def dashboard(request):
     if u.has_perm("leads.view_lead"):
         qs = visible_leads(u)
 
-        counts = {
-            r["status"]: r["n"]
-            for r in qs.values("status").annotate(n=Count("id"))
-        }
+        # Consolidate status counts + value sums into 1 single query
+        stats = list(
+            qs.values("status").annotate(n=Count("id"), v=Sum("value"))
+        )
+        counts = {r["status"]: r["n"] for r in stats}
+        values = {r["status"]: r["v"] or 0 for r in stats}
 
         top = max(list(counts.values()) + [1])
+        total_leads = sum(counts.values())
 
         ctx["pipeline"] = [
             (
@@ -55,13 +75,6 @@ def dashboard(request):
             )
             for s in LEAD_STATUSES
         ]
-
-        values = {
-            r["status"]: r["v"] or 0
-            for r in qs.values("status").annotate(v=Sum("value"))
-        }
-
-        total_leads = qs.count()
 
         ctx["pipe_distribution"] = [
             (
@@ -75,19 +88,14 @@ def dashboard(request):
 
         ctx["leads_total"] = total_leads
         ctx["leads_new"] = counts.get("New", 0)
+        ctx["won_value"] = values.get("Won", 0)
 
-        ctx["won_value"] = (
-            qs.filter(status="Won")
-            .aggregate(v=Sum("value"))["v"] or 0
-        )
-
-        ctx["followups"] = (
+        ctx["followups"] = list(
             qs.exclude(status__in=["Won", "Lost"])
             .filter(next_followup__lte=timezone.localdate())
             .order_by("next_followup")[:6]
         )
 
-        # Leads available for task assignment
         ctx["leads"] = qs
 
     # -------------------------
@@ -107,8 +115,6 @@ def dashboard(request):
         ]
 
         ctx["projects_total"] = sum(pc.values())
-
-        # Projects available for task assignment
         ctx["projects"] = Project.objects.all()
 
     # -------------------------
@@ -121,14 +127,16 @@ def dashboard(request):
     # -------------------------
     # EMPLOYEES
     # -------------------------
-    ctx["users"] = User.objects.filter(
-        is_active=True
-    ).order_by("name")
+    ctx["users"] = list(
+        User.objects.filter(
+            is_active=True
+        ).order_by("name")
+    )
 
     # -------------------------
     # MY OPEN TASKS
     # -------------------------
-    ctx["my_tasks"] = (
+    ctx["my_tasks"] = list(
         Task.objects
         .filter(
             assigned_to=u,
@@ -140,11 +148,7 @@ def dashboard(request):
         )[:8]
     )
 
-    return render(
-        request,
-        "core/dashboard.html",
-        ctx
-    )
+    return ctx
 
 def _back(request, default="home"):
     nxt = request.POST.get("next", "")
@@ -187,6 +191,7 @@ def task_create(request):
             request,
             "Task created successfully."
         )
+        cache.delete(f"dashboard_ctx_{request.user.pk}")
 
     else:
         messages.error(
@@ -204,6 +209,7 @@ def task_toggle(request, pk):
         raise PermissionDenied
     t.done = not t.done
     t.save(update_fields=["done"])
+    cache.delete(f"dashboard_ctx_{request.user.pk}")
     return _back(request)
 
 
@@ -214,4 +220,5 @@ def task_delete(request, pk):
     if request.user.pk not in (t.assigned_to_id, t.created_by_id):
         raise PermissionDenied
     t.delete()
+    cache.delete(f"dashboard_ctx_{request.user.pk}")
     return _back(request)

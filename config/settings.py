@@ -62,15 +62,24 @@ if os.getenv("DATABASE_URL"):
     DATABASES = {
         "default": dj_database_url.config(
             conn_max_age=600,
+            conn_health_checks=True,
             ssl_require=True,
         )
     }
+    DATABASES["default"]["CONN_HEALTH_CHECKS"] = True
     # Resolve host to IPv4 hostaddr to prevent ISP IPv6 NAT64 SYN timeouts
     if DATABASES["default"].get("HOST"):
         try:
             import socket
             _ipv4 = socket.gethostbyname(DATABASES["default"]["HOST"])
-            DATABASES["default"].setdefault("OPTIONS", {})["hostaddr"] = _ipv4
+            opts = DATABASES["default"].setdefault("OPTIONS", {})
+            opts["hostaddr"] = _ipv4
+            opts.update({
+                "keepalives": 1,
+                "keepalives_idle": 30,
+                "keepalives_interval": 10,
+                "keepalives_count": 5,
+            })
         except Exception:
             pass
 
@@ -108,10 +117,19 @@ STATIC_ROOT = BASE_DIR / "staticfiles"
 STATICFILES_STORAGE = "whitenoise.storage.CompressedStaticFilesStorage"
 DEFAULT_AUTO_FIELD = "django.db.models.BigAutoField"
 
-# Sessions
+# Sessions — signed cookies avoid remote database roundtrips on every request
+SESSION_ENGINE = "django.contrib.sessions.backends.signed_cookies"
 SESSION_COOKIE_AGE = 8 * 3600
 SESSION_COOKIE_HTTPONLY = True
 SESSION_COOKIE_SAMESITE = "Lax"
+
+# In-memory cache for fast data caching (no DB roundtrips)
+CACHES = {
+    "default": {
+        "BACKEND": "django.core.cache.backends.locmem.LocMemCache",
+        "LOCATION": "nexora-cache",
+    }
+}
 
 # OTP
 OTP_TTL_MIN = 5

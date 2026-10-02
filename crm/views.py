@@ -50,11 +50,18 @@ def company_list(request):
     if tag:
         qs = qs.filter(tags__name__iexact=tag)
 
-    total_companies = qs.count()
-    total_rev = qs.aggregate(Sum("annual_revenue"))["annual_revenue__sum"] or 0
-    avg_rev = qs.aggregate(Avg("annual_revenue"))["annual_revenue__avg"] or 0
+    stats = qs.aggregate(
+        total=Count("id"),
+        total_rev=Sum("annual_revenue"),
+        avg_rev=Avg("annual_revenue"),
+    )
+    total_companies = stats["total"] or 0
+    total_rev = stats["total_rev"] or 0
+    avg_rev = stats["avg_rev"] or 0
 
-    page = Paginator(qs, 15).get_page(request.GET.get("page"))
+    paginator = Paginator(qs, 15)
+    paginator.count = total_companies
+    page = paginator.get_page(request.GET.get("page"))
     all_tags = Tag.objects.all()[:30]
 
     return render(request, "crm/companies/list.html", {
@@ -171,7 +178,9 @@ def contact_list(request):
     total_contacts = qs.count()
     with_company = qs.filter(company__isnull=False).count()
 
-    page = Paginator(qs, 15).get_page(request.GET.get("page"))
+    paginator = Paginator(qs, 15)
+    paginator.count = total_contacts
+    page = paginator.get_page(request.GET.get("page"))
     all_companies = Company.objects.all()[:40]
     all_tags = Tag.objects.all()[:30]
 

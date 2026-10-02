@@ -41,8 +41,10 @@ class User(AbstractBaseUser, PermissionsMixin):
 
     @property
     def role(self):
-        g = self.groups.first()
-        return g.name if g else "No role"
+        if not hasattr(self, "_cached_role"):
+            g = self.groups.first()
+            self._cached_role = g.name if g else "No role"
+        return self._cached_role
 
     def __str__(self):
         return self.name or self.email

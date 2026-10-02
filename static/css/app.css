@@ -5,7 +5,7 @@
    Themes: Dark Mode & Light Mode with Theme Switcher Support
    ========================================================================== */
 
-@import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap');
+/* Inter font loaded via <link> in base.html — no render-blocking @import */
 
 /* Default Theme: Dark Mode */
 :root,
