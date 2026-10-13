@@ -7,26 +7,26 @@
 
 /* Inter font loaded via <link> in base.html — no render-blocking @import */
 
-/* Default Theme: Dark Mode */
+/* Default Theme: Dark Mode (Rich Textured Obsidian - Not Flat Black) */
 :root,
 :root[data-theme="dark"] {
   /* Surfaces */
-  --bg: #09090B;
-  --bg-secondary: #0D0D12;
-  --surface: #111116;
-  --surface-elevated: #18181F;
-  --surface-hover: #202028;
+  --bg: #0C0E17;
+  --bg-secondary: #111422;
+  --surface: #151827;
+  --surface-elevated: #1B2032;
+  --surface-hover: #22283E;
   
   /* Borders */
-  --border: #27272F;
-  --border-subtle: #1C1C23;
-  --border-active: #3A3A45;
+  --border: #252A3E;
+  --border-subtle: #1B1F30;
+  --border-active: #38405A;
   --border-focus: #E11D72;
   
   /* Text */
-  --text-primary: #F4F4F5;
-  --text-secondary: #A1A1AA;
-  --text-muted: #71717A;
+  --text-primary: #F4F4F6;
+  --text-secondary: #A0A5B5;
+  --text-muted: #707588;
   
   /* NEXORA Brand Magenta Palette */
   --accent: #E11D72;
@@ -34,7 +34,7 @@
   --accent-dark: #A80F4F;
   --accent-soft: rgba(225, 29, 114, 0.12);
   --accent-border: rgba(225, 29, 114, 0.28);
-  --accent-glow: 0 0 20px rgba(225, 29, 114, 0.20);
+  --accent-glow: 0 0 20px rgba(225, 29, 114, 0.22);
   --accent-gradient: linear-gradient(135deg, #E11D72 0%, #A80F4F 100%);
   --accent-gradient-hover: linear-gradient(135deg, #F43F8A 0%, #E11D72 100%);
   
@@ -60,43 +60,45 @@
   --info-text: #93c5fd;
 
   /* Shadows */
-  --shadow-card: 0 1px 3px rgba(0, 0, 0, 0.5), 0 6px 16px rgba(0, 0, 0, 0.3);
-  --shadow-dropdown: 0 12px 30px rgba(0, 0, 0, 0.75), 0 4px 10px rgba(0, 0, 0, 0.5);
+  --shadow-card: 0 1px 3px rgba(0, 0, 0, 0.4), 0 6px 18px rgba(0, 0, 0, 0.25), inset 0 1px 0 rgba(255, 255, 255, 0.05);
+  --shadow-dropdown: 0 12px 32px rgba(0, 0, 0, 0.75), 0 4px 12px rgba(0, 0, 0, 0.5);
   --shadow-btn: 0 1px 2px rgba(0, 0, 0, 0.4), inset 0 1px 0 rgba(255, 255, 255, 0.15);
 
-  /* Background Gradient */
-  --bg-mesh: 
-    radial-gradient(ellipse 80% 50% at 50% -20%, rgba(225, 29, 114, 0.07), transparent 70%),
-    radial-gradient(ellipse 50% 40% at 90% 90%, rgba(168, 15, 79, 0.05), transparent 60%);
+  /* Enterprise Patterns, Textures & Atmospheric Lighting (Dark) */
+  --pattern-dot-color: rgba(255, 255, 255, 0.095);
+  --pattern-grid-color: rgba(255, 255, 255, 0.042);
+  --pattern-glow-top: radial-gradient(ellipse 75% 45% at 50% 0%, rgba(225, 29, 114, 0.18), transparent 70%);
+  --pattern-glow-accent: radial-gradient(ellipse 60% 50% at 90% 90%, rgba(168, 15, 79, 0.12), transparent 60%);
+  --pattern-glow-ambient: radial-gradient(ellipse 50% 40% at 10% 85%, rgba(59, 130, 246, 0.07), transparent 55%);
 }
 
-/* Light Mode Foundation */
+/* Light Mode Foundation (Architectural Slate - Not Flat White) */
 :root[data-theme="light"] {
   /* Surfaces */
-  --bg: #F6F6F7;
-  --bg-secondary: #ECECEF;
+  --bg: #EEF1F6;
+  --bg-secondary: #E3E7F0;
   --surface: #FFFFFF;
   --surface-elevated: #FFFFFF;
-  --surface-hover: #F0F0F4;
+  --surface-hover: #ECEFF5;
   
   /* Borders */
-  --border: #E4E4E7;
-  --border-subtle: #EBEBEF;
-  --border-active: #D4D4D8;
+  --border: #D7DEE9;
+  --border-subtle: #E2E7EF;
+  --border-active: #CBD3E0;
   --border-focus: #E11D72;
   
   /* Text */
-  --text-primary: #18181B;
-  --text-secondary: #52525B;
-  --text-muted: #71717A;
+  --text-primary: #151824;
+  --text-secondary: #525866;
+  --text-muted: #6E7587;
   
   /* NEXORA Brand Magenta Palette */
   --accent: #E11D72;
   --accent-light: #F43F8A;
   --accent-dark: #A80F4F;
   --accent-soft: rgba(225, 29, 114, 0.08);
-  --accent-border: rgba(225, 29, 114, 0.22);
-  --accent-glow: 0 0 16px rgba(225, 29, 114, 0.15);
+  --accent-border: rgba(225, 29, 114, 0.24);
+  --accent-glow: 0 0 18px rgba(225, 29, 114, 0.16);
   --accent-gradient: linear-gradient(135deg, #E11D72 0%, #A80F4F 100%);
   --accent-gradient-hover: linear-gradient(135deg, #F43F8A 0%, #E11D72 100%);
   
@@ -122,14 +124,16 @@
   --info-text: #1e40af;
 
   /* Shadows */
-  --shadow-card: 0 1px 3px rgba(0, 0, 0, 0.06), 0 4px 12px rgba(0, 0, 0, 0.03);
-  --shadow-dropdown: 0 10px 25px rgba(0, 0, 0, 0.12), 0 4px 10px rgba(0, 0, 0, 0.06);
-  --shadow-btn: 0 1px 2px rgba(0, 0, 0, 0.12), inset 0 1px 0 rgba(255, 255, 255, 0.2);
+  --shadow-card: 0 1px 3px rgba(15, 23, 42, 0.05), 0 4px 14px rgba(15, 23, 42, 0.03);
+  --shadow-dropdown: 0 10px 25px rgba(15, 23, 42, 0.12), 0 4px 10px rgba(15, 23, 42, 0.06);
+  --shadow-btn: 0 1px 2px rgba(15, 23, 42, 0.10), inset 0 1px 0 rgba(255, 255, 255, 0.2);
 
-  /* Background Gradient */
-  --bg-mesh: 
-    radial-gradient(ellipse 80% 50% at 50% -20%, rgba(225, 29, 114, 0.03), transparent 70%),
-    radial-gradient(ellipse 50% 40% at 90% 90%, rgba(244, 63, 138, 0.02), transparent 60%);
+  /* Enterprise Patterns, Textures & Atmospheric Lighting (Light) */
+  --pattern-dot-color: rgba(15, 23, 42, 0.095);
+  --pattern-grid-color: rgba(15, 23, 42, 0.045);
+  --pattern-glow-top: radial-gradient(ellipse 75% 45% at 50% 0%, rgba(225, 29, 114, 0.08), transparent 70%);
+  --pattern-glow-accent: radial-gradient(ellipse 60% 50% at 90% 90%, rgba(139, 92, 246, 0.06), transparent 60%);
+  --pattern-glow-ambient: radial-gradient(ellipse 50% 40% at 10% 85%, rgba(59, 130, 246, 0.04), transparent 55%);
 }
 
 /* Constants shared across themes */
@@ -161,11 +165,30 @@ html, body {
   overflow-x: hidden;
 }
 
-/* Background Subtle Mesh Gradient */
+/* Multi-Layered Enterprise Patterns & Atmospheric Textures */
 body {
+  background-color: var(--bg);
   background-image: 
-    radial-gradient(ellipse 80% 50% at 50% -20%, rgba(225, 29, 114, 0.08), transparent 70%),
-    radial-gradient(ellipse 50% 40% at 90% 90%, rgba(168, 15, 79, 0.04), transparent 60%);
+    var(--pattern-glow-top),
+    var(--pattern-glow-accent),
+    var(--pattern-glow-ambient),
+    radial-gradient(circle at 1px 1px, var(--pattern-dot-color) 1.25px, transparent 0),
+    linear-gradient(to right, var(--pattern-grid-color) 1px, transparent 1px),
+    linear-gradient(to bottom, var(--pattern-grid-color) 1px, transparent 1px);
+  background-size: 
+    100% 100%,
+    100% 100%,
+    100% 100%,
+    24px 24px,
+    72px 72px,
+    72px 72px;
+  background-position:
+    0 0,
+    0 0,
+    0 0,
+    0 0,
+    0 0,
+    0 0;
   background-attachment: fixed;
 }
 
@@ -322,6 +345,8 @@ aside {
   width: var(--sidebar-width);
   background-color: var(--bg-secondary);
   border-right: 1px solid var(--border);
+  backdrop-filter: blur(16px);
+  -webkit-backdrop-filter: blur(16px);
   display: flex;
   flex-direction: column;
   padding: 20px 16px 16px;
@@ -1532,13 +1557,56 @@ tbody tr:hover {
   padding: 32px 16px;
   background-color: var(--bg);
   background-image: 
-    radial-gradient(ellipse 60% 40% at 50% 20%, var(--accent-soft), transparent 70%),
-    radial-gradient(ellipse 40% 30% at 85% 80%, rgba(168, 15, 79, 0.05), transparent 60%);
+    radial-gradient(ellipse 70% 55% at 50% 36%, rgba(225, 29, 114, 0.20), transparent 70%),
+    radial-gradient(ellipse 55% 45% at 85% 85%, rgba(168, 15, 79, 0.14), transparent 60%),
+    radial-gradient(ellipse 45% 35% at 15% 15%, rgba(59, 130, 246, 0.09), transparent 55%),
+    radial-gradient(circle at 1px 1px, var(--pattern-dot-color) 1.35px, transparent 0),
+    linear-gradient(to right, var(--pattern-grid-color) 1px, transparent 1px),
+    linear-gradient(to bottom, var(--pattern-grid-color) 1px, transparent 1px);
+  background-size: 
+    100% 100%,
+    100% 100%,
+    100% 100%,
+    24px 24px,
+    72px 72px,
+    72px 72px;
+  position: relative;
+  overflow: hidden;
+}
+
+:root[data-theme="light"] .public-page {
+  background-image: 
+    radial-gradient(ellipse 70% 55% at 50% 36%, rgba(225, 29, 114, 0.08), transparent 70%),
+    radial-gradient(ellipse 55% 45% at 85% 85%, rgba(139, 92, 246, 0.05), transparent 60%),
+    radial-gradient(ellipse 45% 35% at 15% 15%, rgba(59, 130, 246, 0.04), transparent 55%),
+    radial-gradient(circle at 1px 1px, var(--pattern-dot-color) 1.3px, transparent 0),
+    linear-gradient(to right, var(--pattern-grid-color) 1px, transparent 1px),
+    linear-gradient(to bottom, var(--pattern-grid-color) 1px, transparent 1px);
+}
+
+.public-page::before {
+  content: "";
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  width: 720px;
+  height: 720px;
+  background: radial-gradient(circle, rgba(225, 29, 114, 0.14) 0%, rgba(225, 29, 114, 0.03) 45%, transparent 70%);
+  pointer-events: none;
+  filter: blur(50px);
+  z-index: 0;
+}
+
+:root[data-theme="light"] .public-page::before {
+  background: radial-gradient(circle, rgba(225, 29, 114, 0.065) 0%, rgba(225, 29, 114, 0.015) 45%, transparent 70%);
 }
 
 .public-box {
   width: 100%;
   max-width: 440px;
+  position: relative;
+  z-index: 1;
 }
 
 .auth-card {
@@ -1546,9 +1614,22 @@ tbody tr:hover {
   border: 1px solid var(--border);
   border-radius: var(--radius-lg);
   padding: 38px 34px;
-  box-shadow: 0 20px 50px -10px rgba(0, 0, 0, 0.7);
+  box-shadow: 
+    0 0 0 1px var(--border-subtle),
+    0 24px 60px -12px rgba(0, 0, 0, 0.70),
+    0 12px 24px -8px rgba(0, 0, 0, 0.40);
   position: relative;
   overflow: hidden;
+  backdrop-filter: blur(16px);
+  -webkit-backdrop-filter: blur(16px);
+}
+
+:root[data-theme="light"] .auth-card {
+  background-color: rgba(255, 255, 255, 0.95);
+  box-shadow: 
+    0 0 0 1px var(--border-subtle),
+    0 20px 50px -12px rgba(15, 23, 42, 0.09),
+    0 8px 20px -6px rgba(15, 23, 42, 0.05);
 }
 
 .auth-card::before {
@@ -1943,12 +2024,20 @@ tbody tr:hover {
   margin-top: 22px;
   padding: 18px 20px;
   background-color: var(--surface-elevated);
+  background-image: radial-gradient(circle at 95% 10%, var(--accent-soft), transparent 60%);
   border: 1px solid var(--accent-border);
   border-radius: var(--radius-md);
   box-shadow: 0 4px 16px rgba(0, 0, 0, 0.25);
   text-align: left;
   position: relative;
   overflow: hidden;
+}
+
+:root[data-theme="light"] .demo-login-box {
+  background-color: #F8FAFD;
+  background-image: radial-gradient(circle at 95% 10%, rgba(225, 29, 114, 0.06), transparent 60%);
+  border-color: rgba(225, 29, 114, 0.28);
+  box-shadow: 0 4px 16px rgba(15, 23, 42, 0.04);
 }
 
 .demo-login-box::before {
